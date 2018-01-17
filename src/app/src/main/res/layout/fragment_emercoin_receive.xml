@@ -1,0 +1,186 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical"
+              tools:context=".ui.fragment.receiveCoinFragment.emercoinReceiveFragment.EmercoinReceiveFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="194dp"
+        android:background="@color/colorPrimary"
+        android:elevation="3dp"
+        android:orientation="vertical"
+        android:paddingTop="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/nav_layout_margin_top">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="72dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/emc_logo_main"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:text="@string/emercoin"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textSizeXLarge"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/item_text_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_balance_emc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dashboard_text_space"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:maxWidth="@dimen/max_width_whole_balance_row"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXXLarge"
+                app:autoSizeMinTextSize="@dimen/textSizeMedium"
+                app:autoSizeTextType="uniform"
+                tools:text="999999999.99999999 EMC"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_whole_row_emc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dashboard_text_margin"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:maxWidth="@dimen/max_width_whole_balance_row"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXSmall"
+                app:autoSizeMinTextSize="@dimen/textSizeSmall"
+                app:autoSizeTextType="uniform"
+                tools:text="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:background="@color/defaultColor"
+        android:gravity="center"
+        android:text="@string/receive_emc"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/textSizeMedium"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_qr_receive_emc"
+            android:layout_width="@dimen/iv_qr_size"
+            android:layout_height="@dimen/iv_qr_size"
+            android:layout_centerHorizontal="true"
+            android:background="@color/black"
+            tools:background="@color/black"/>
+
+        <ImageView
+            android:id="@+id/iv_send_receive_emc"
+            android:layout_width="@dimen/nav_icon_size"
+            android:layout_height="@dimen/nav_icon_size"
+            android:layout_marginTop="32dp"
+            android:layout_toEndOf="@+id/iv_qr_receive_emc"
+            android:src="@mipmap/ic_send"/>
+
+        <ImageView
+            android:id="@+id/iv_copy_receive_emc"
+            android:layout_width="@dimen/nav_icon_size"
+            android:layout_height="@dimen/nav_icon_size"
+            android:layout_above="@+id/sp_address_receive_emc"
+            android:layout_marginBottom="32dp"
+            android:layout_toEndOf="@+id/iv_qr_receive_emc"
+            android:src="@mipmap/ic_copy"/>
+
+        <Spinner
+            android:id="@+id/sp_address_receive_emc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_qr_receive_emc"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:dropDownVerticalOffset="-24dp"
+            android:overlapAnchor="false"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/sp_address_receive_emc"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:background="@color/black"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="8dp"
+            android:text="@string/amount"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSizeLarge"/>
+
+        <EditText
+            android:id="@+id/et_amount_receive_emc"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:background="@drawable/edit_text_seed_confirm_bg"
+            android:inputType="numberDecimal"
+            android:maxLength="16"
+            android:paddingLeft="8dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSizeMedium"
+            tools:text="999999999.99999"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="4dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_horizontal"
+            android:text="@string/emc"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/textSizeLarge"/>
+    </LinearLayout>
+
+
+</LinearLayout>

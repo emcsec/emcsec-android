@@ -1,0 +1,178 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="ui.fragment.enterAnAddressEmercoinFragment.EnterAnAddressEmercoinFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="194dp"
+        android:background="@color/colorPrimary"
+        android:elevation="3dp"
+        android:orientation="vertical"
+        android:paddingTop="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/nav_layout_margin_top">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="72dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/emc_logo_bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:text="@string/emercoin"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textSizeXLarge"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/item_text_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_balance_emc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dashboard_text_space"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:maxWidth="@dimen/max_width_whole_balance_row"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXXLarge"
+                app:autoSizeMinTextSize="@dimen/textSizeMedium"
+                app:autoSizeTextType="uniform"
+                tools:text="999999999.99999999 EMC"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_whole_row_emc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dashboard_text_margin"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:maxWidth="@dimen/max_width_whole_balance_row"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXSmall"
+                app:autoSizeMinTextSize="@dimen/textSizeSmall"
+                app:autoSizeTextType="uniform"
+                tools:text="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/defaultColor">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/send_coins"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/textSizeMedium"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/et_enter_an_address_emc_frag_address"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginEnd="@dimen/item_margin"
+            android:layout_marginStart="@dimen/item_margin"
+            android:layout_marginTop="@dimen/item_margin"
+            android:background="@drawable/edit_text_default_bg"
+            android:fontFamily="sans-serif-light"
+            android:hint="@string/enter_an_address"
+            android:inputType="text"
+            android:lines="1"
+            android:maxLength="34"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:textColor="@color/black"
+            tools:text="E4hj4h4ui4y4khj4hkj4hjkh44"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginEnd="@dimen/item_margin"
+            android:layout_marginStart="@dimen/item_margin"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="4dp"
+                android:text="@string/amount"
+                android:textColor="@color/black"
+                android:textSize="19sp"/>
+
+
+            <EditText
+                android:id="@+id/et_enter_an_address_emc_frag_amount"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/edit_text_default_bg"
+                android:gravity="end|center_vertical"
+                android:inputType="numberDecimal"
+                android:maxLength="18"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:textColor="@color/black"
+                tools:text="56565767677.78"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="4dp"
+                android:text="@string/emc"
+                android:textColor="@color/black"
+                android:textSize="19sp"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_enter_an_address_emc_frag_send"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_btn_send_address_emc"
+            android:background="@drawable/button_selector"
+            android:enabled="false"
+            android:fontFamily="sans-serif"
+            android:text="@string/send"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeMedium"/>
+
+    </LinearLayout>
+</LinearLayout>

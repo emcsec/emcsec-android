@@ -1,0 +1,99 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/header_height"
+        android:background="@color/colorPrimary"
+        android:elevation="3dp"
+        android:orientation="vertical"
+        android:paddingTop="24dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="72dp"
+            android:layout_marginTop="@dimen/nav_layout_margin_top"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/emc_logo_bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:text="@string/emercoin"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXLarge"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/item_text_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_balance_emc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dashboard_text_space"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:maxWidth="@dimen/max_width_whole_balance_row"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXXLarge"
+                app:autoSizeMinTextSize="@dimen/textSizeMedium"
+                app:autoSizeTextType="uniform"
+                tools:text="999999999.99999999 EMC"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_whole_row_emc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dashboard_text_margin"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:maxWidth="@dimen/max_width_whole_balance_row"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXSmall"
+                app:autoSizeMinTextSize="@dimen/textSizeSmall"
+                app:autoSizeTextType="uniform"
+                tools:text="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/defaultColor">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/my_addresses"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/textSizeMedium"/>
+
+    </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_emercoin_addresses"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+    </android.support.v7.widget.RecyclerView>
+</LinearLayout>

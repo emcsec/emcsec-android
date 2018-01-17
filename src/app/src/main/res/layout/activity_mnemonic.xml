@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center_horizontal"
+    tools:context=".ui.activities.seedGenerationAndRestoring.MnemonicActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:gravity="center"
+            android:background="@color/colorPrimary"
+            android:elevation="3dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/seed"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/generate_a_new_wallet_header"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXLarge"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/please_write_down_this_word"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSizeLarge"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_word"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/textSizeXXLarge"
+        tools:text="turn"/>
+
+    <TextView
+        android:id="@+id/tv_word_of"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_word"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/colorPrimary"
+        tools:text="Word 1 of 12"/>
+
+    <Button
+        android:id="@+id/btn_next_word"
+        android:layout_width="@dimen/width_of_auth_views"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="64dp"
+        android:background="@drawable/button_selector"
+        android:text="@string/next_word"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeMedium"/>
+
+    <TextView
+        android:id="@+id/tv_start_over"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:text="@string/start_over"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/textSizeMedium"/>
+</RelativeLayout>

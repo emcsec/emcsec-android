@@ -1,0 +1,147 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical"
+              tools:context="ui.fragment.settingsFragment.SettingsChangeAddressesFragment">
+
+    <LinearLayout
+        android:id="@+id/ll_header_seed_restoring"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_gravity="center_vertical"
+        android:background="@color/colorPrimary"
+        android:elevation="3dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="56dp"
+        android:paddingTop="24dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginRight="8dp"
+            android:background="@mipmap/ic_settings"
+            android:backgroundTint="@color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addresses_for_the_change"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeMedium"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_address_for_the_change_in_emc"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_list_height_settings"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="4dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/address_for_the_change_in_emercoin"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/textSizeMedium"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/address_in_details_tx"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeMedium"/>
+
+            <TextView
+                android:id="@+id/tv_address_for_the_change_emc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:text="EMmrokgX4TPfZ5wwYp3uGNx8jvbhb5DREw"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeXSmall"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_edit_change_address_emc"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:src="@mipmap/ic_edit_server_emc"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/lightGray"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_address_for_the_change_in_btc"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_list_height_settings"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="4dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/address_for_the_change_in_bitcoin"
+                android:textColor="@color/orange"
+                android:textSize="@dimen/textSizeMedium"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/address_in_details_tx"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeMedium"/>
+
+            <TextView
+                android:id="@+id/tv_address_for_the_change_btc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:text="1FmAx3mfCnYLq9kVHHRX9XBnnM4mjpHGZs"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeXSmall"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_edit_change_address_btc"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:src="@mipmap/ic_edit_server_btc"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/lightGray"/>
+    </RelativeLayout>
+
+</LinearLayout>

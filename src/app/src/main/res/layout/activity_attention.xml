@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center_horizontal"
+    tools:context=".ui.activities.seedGenerationAndRestoring.AttentionActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:gravity="center"
+            android:background="@color/colorPrimary"
+            android:elevation="3dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/seed"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/generate_a_new_wallet_header"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXLarge"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="@string/please_save_words_on_paper_order_is_important_this_seed_will_allow_you_to_recover_your_wallet_in_case_of_phone_failure"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSizeMedium"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@color/red">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/attention"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXXLarge"/>
+
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="@string/never_disclose_your_seed_nnever_type_it_on_a_website_ndo_not_store_it_electronically_n_nif_you_understand_click_start"
+            android:textColor="@color/red"
+            android:textSize="@dimen/textSizeMedium"/>
+
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="@dimen/width_of_auth_views"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="64dp"
+            android:background="@drawable/button_selector"
+            android:text="@string/start"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeMedium"/>
+    </LinearLayout>
+</RelativeLayout>

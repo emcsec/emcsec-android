@@ -1,0 +1,209 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="194dp"
+        android:background="@color/orange"
+        android:elevation="3dp"
+        android:orientation="vertical"
+        android:paddingTop="24dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="72dp"
+            android:layout_marginTop="@dimen/nav_layout_margin_top"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="28dp"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/ic_bitcoin"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bitcoin"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXLarge"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/item_text_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_balance_btc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dashboard_text_space"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:maxWidth="@dimen/max_width_whole_balance_row"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXXLarge"
+                app:autoSizeMinTextSize="@dimen/textSizeMedium"
+                app:autoSizeTextType="uniform"
+                tools:text="999999999.99999999 BTC"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_whole_row_btc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dashboard_text_margin"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:maxWidth="@dimen/max_width_whole_balance_row"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeXSmall"
+                app:autoSizeMinTextSize="@dimen/textSizeSmall"
+                app:autoSizeTextType="uniform"
+                tools:text="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:background="@color/defaultColor"
+        android:gravity="center"
+        android:text="@string/operations"
+        android:textColor="@color/orange"
+        android:textSize="@dimen/textSizeMedium"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_send_coins_dashboard_bitcoin"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_list_height_operations"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <ImageView
+            android:layout_width="@dimen/nav_icon_size"
+            android:layout_height="@dimen/nav_icon_size"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:background="@mipmap/ic_send_coins"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/item_text_margin"
+            android:text="@string/send_coins"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/textSizeMedium"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="@dimen/item_text_margin"
+        android:background="@color/buttonDisabled"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_receive_coins_dashboard_bitcoin"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_list_height_operations"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <ImageView
+            android:layout_width="@dimen/nav_icon_size"
+            android:layout_height="@dimen/nav_icon_size"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:background="@mipmap/ic_receive_coins"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/item_text_margin"
+            android:text="@string/receive_coins"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/textSizeMedium"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="@dimen/item_text_margin"
+        android:background="@color/buttonDisabled"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_history_btc"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_list_height_operations"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <ImageView
+            android:layout_width="@dimen/nav_icon_size"
+            android:layout_height="@dimen/nav_icon_size"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:background="@mipmap/ic_transaction_history"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/item_text_margin"
+            android:text="@string/transaction_history"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/textSizeMedium"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="@dimen/item_text_margin"
+        android:background="@color/buttonDisabled"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_my_addresses_dashboard_bitcoin"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_list_height_operations"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <ImageView
+            android:layout_width="@dimen/nav_icon_size"
+            android:layout_height="@dimen/nav_icon_size"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:background="@mipmap/ic_my_addresses"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/item_text_margin"
+            android:text="@string/my_addresses"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/textSizeMedium"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="@dimen/item_text_margin"
+        android:background="@color/buttonDisabled"/>
+
+</LinearLayout>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/forgot_password_margin"
+    app:cardCornerRadius="30dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_restore_password">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding_restore_password"
+            android:layout_marginTop="@dimen/padding_restore_password"
+            android:text="@string/delete_contact"
+            android:textColor="@android:color/background_dark"
+            android:textSize="@dimen/textSizeLarge"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_restore_password"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_delete_address_book_emercoin"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/btn_add_new_address_light_emc_bg"
+                android:backgroundTint="@color/colorPrimary"
+                android:fontFamily="sans-serif"
+                android:text="@string/delete"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeMedium"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/white"/>
+
+            <Button
+                android:id="@+id/btn_cancel_address_book_emercoin"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/btn_cancel_new_address_light_emc_bg"
+                android:backgroundTint="@color/buttonCancelBitcoin"
+                android:fontFamily="sans-serif"
+                android:text="@string/cancel"
+                android:textColor="@drawable/text_selector"
+                android:textSize="@dimen/textSizeMedium"/>
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

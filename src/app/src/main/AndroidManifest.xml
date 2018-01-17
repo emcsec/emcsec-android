@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.aspanta.emcsec">
+
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="27"/>
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false"/>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission-sdk-23 android:name="android.permission.INTERNET"/>
+    <uses-permission-sdk-23 android:name="android.permission.CAMERA"/>
+
+    <!-- support for tablets -->
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true"/>
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_emercoin_logo"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_emercoin_logo"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".ui.activities.SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.activities.seedGenerationAndRestoring.GenerateRestoreSeedActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.StatusBar">
+        </activity>
+        <activity
+            android:name=".ui.activities.seedGenerationAndRestoring.SeedGenerationSuccessfullyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.StatusBar"/>
+        <activity
+            android:name=".ui.activities.seedGenerationAndRestoring.MnemonicActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.StatusBar"/>
+        <activity
+            android:name=".ui.activities.seedGenerationAndRestoring.MnemonicConfirmationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.StatusBar"/>
+        <activity
+            android:name=".ui.activities.seedGenerationAndRestoring.AddressesBtcEmcActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.StatusBar"/>
+        <activity
+            android:name=".ui.activities.seedGenerationAndRestoring.AttentionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.StatusBar"/>
+        <activity
+            android:name=".ui.activities.seedGenerationAndRestoring.SeedRestoringSuccessfullyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.StatusBar"/>
+        <activity
+            android:name=".ui.activities.seedGenerationAndRestoring.SeedRestoringActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.StatusBar"/>
+        <activity
+            android:name=".ui.activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
+        <activity
+            android:name=".ui.activities.QrReaderActivity"
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
+        </activity>
+        <activity android:name=".ui.activities.SetUpAndConfirmPinActivity">
+
+        </activity>
+        <activity android:name=".ui.activities.EnterPinActivity">
+        </activity>
+    </application>
+</manifest>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="200dp"
+    android:layout_height="150dp"
+    android:layout_margin="@dimen/forgot_password_margin"
+    app:cardCornerRadius="35dp">
+
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_restore_password">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding_restore_password"
+            android:text="@string/please_wait"
+            android:textColor="@android:color/background_dark"
+            android:textSize="@dimen/textSizeLarge"/>
+
+        <ProgressBar
+            android:id="@+id/pb_please_wait"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:visibility="visible"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_restore_password"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_download_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" / "/>
+
+            <TextView
+                android:id="@+id/tv_total_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

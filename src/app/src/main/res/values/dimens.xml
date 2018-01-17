@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_bottom_padding">20dp</dimen>
+    <dimen name="btn_create_account_margin_bottom">32dp</dimen>
+    <dimen name="edit_text_margin_top">16dp</dimen>
+    <dimen name="textSizeSmall">12sp</dimen>
+    <dimen name="textSizeXSmall">13sp</dimen>
+    <dimen name="textSizeMedium">17sp</dimen>
+    <dimen name="textSizeLarge">20sp</dimen>
+    <dimen name="textSizeXLarge">24sp</dimen>
+    <dimen name="textSizeXXLarge">28sp</dimen>
+    <dimen name="textSizeXXXLarge">32sp</dimen>
+
+    <dimen name="width_of_auth_views">240dp</dimen>
+    <dimen name="max_width_whole_balance_row">280dp</dimen>
+    <dimen name="margin_from_label_emercoin_one">24dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">164dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="item_list_height">48dp</dimen>
+    <dimen name="item_list_height_settings">72dp</dimen>
+    <dimen name="item_list_height_operations">56dp</dimen>
+    <dimen name="item_text_margin">72dp</dimen>
+    <dimen name="header_margin_top_content">24dp</dimen>
+    <dimen name="nav_icon_size">24dp</dimen>
+    <dimen name="nav_layout_margin_top">24dp</dimen>
+    <dimen name="bottom_item_line_margin_left">56dp</dimen>
+    <dimen name="size_icon_item2">16dp</dimen>
+    <dimen name="dashboard_text_margin">8dp</dimen>
+    <dimen name="dashboard_text_space">4dp</dimen>
+    <dimen name="padding_restore_password">16dp</dimen>
+    <dimen name="forgot_password_margin">16dp</dimen>
+    <dimen name="logo_main_width">120dp</dimen>
+    <dimen name="logo_main_height">104dp</dimen>
+    <dimen name="header_height">194dp</dimen>
+    <dimen name="layoutMnemonicInputsFieldsHeight">300dp</dimen>
+    <dimen name="item_margin">24dp</dimen>
+    <dimen name="fee_margin_top">16dp</dimen>
+    <dimen name="margin_btn_send_address">32dp</dimen>
+    <dimen name="margin_btn_send_address_emc">96dp</dimen>
+    <dimen name="transaction_amount_width">150dp</dimen>
+    <dimen name="transaction_detail_width">270dp</dimen>
+</resources>

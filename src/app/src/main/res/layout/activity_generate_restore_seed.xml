@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/container_generate_restore"
+    android:background="@color/white"
+    android:gravity="center_horizontal"
+    tools:context=".ui.activities.seedGenerationAndRestoring.GenerateRestoreSeedActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:layout_width="@dimen/logo_main_width"
+            android:layout_height="@dimen/logo_main_height"
+            android:layout_marginTop="48dp"
+            android:background="@drawable/emc_logo_main"
+            android:backgroundTint="@color/colorPrimary"/>
+
+        <TextView
+            android:id="@+id/dashboard_header_text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/emercoin_secure"
+            android:textColor="@color/colorPrimary"
+            android:textSize="32sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/dashboard_header_text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/mobile_wallet"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/textSizeXLarge"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_generate_seed"
+                android:layout_width="@dimen/width_of_auth_views"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/button_selector"
+                android:text="@string/generate_a_new_wallet"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeMedium"/>
+
+            <Button
+                android:id="@+id/btn_restore_from_seed"
+                android:layout_width="@dimen/width_of_auth_views"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/button_selector"
+                android:text="@string/restore_your_wallet"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSizeMedium"/>
+
+            <TextView
+                android:id="@+id/tv_advanced_server_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="40dp"
+                android:text="@string/advanced_server_settings"
+                android:textColor="@color/colorPrimary"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:text="@string/aspanta_limited_2017"
+        android:textColor="@color/colorPrimary"/>
+
+</RelativeLayout>

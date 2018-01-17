@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_spinner_menu_emc_selector"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_label_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif"
+        android:lines="1"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/textSizeMedium"
+        tools:text="@string/label"/>
+
+    <TextView
+        android:id="@+id/tv_address_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-3dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-light"
+        android:lines="1"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/textSizeXSmall"
+        tools:text="@string/address"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/lightGray"/>
+
+</LinearLayout>
+
+

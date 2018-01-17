@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_bottom_padding">10dp</dimen>
+    <dimen name="btn_create_account_margin_bottom">20dp</dimen>
+    <dimen name="edit_text_margin_top">12dp</dimen>
+    <dimen name="textSizeSmall">10sp</dimen>
+    <dimen name="textSizeXSmall">13sp</dimen>
+    <dimen name="textSizeMedium">14sp</dimen>
+    <dimen name="textSizeLarge">17sp</dimen>
+    <dimen name="textSizeXLarge">20sp</dimen>
+    <dimen name="textSizeXXLarge">24sp</dimen>
+    <dimen name="textSizeXXXLarge">28sp</dimen>
+
+    <dimen name="max_width_whole_balance_row">240dp</dimen>
+    <dimen name="margin_from_label_emercoin_one">10dp</dimen>
+    <dimen name="padding_restore_password">12dp</dimen>
+    <dimen name="forgot_password_margin">12dp</dimen>
+    <dimen name="width_of_auth_views">220dp</dimen>
+    <dimen name="header_height">176dp</dimen>
+    <dimen name="iv_qr_size">160dp</dimen>
+    <dimen name="item_list_height_settings">64dp</dimen>
+
+    <dimen name="logo_main_width">80dp</dimen>
+    <dimen name="logo_main_height">70dp</dimen>
+    <dimen name="layoutMnemonicInputsFieldsHeight">240dp</dimen>
+    <dimen name="item_margin">10dp</dimen>
+    <dimen name="fee_margin_top">8dp</dimen>
+    <dimen name="margin_btn_send_address">12dp</dimen>
+    <dimen name="margin_btn_send_address_emc">56dp</dimen>
+    <dimen name="transaction_amount_width">130dp</dimen>
+    <dimen name="transaction_detail_width">270dp</dimen>
+
+</resources>

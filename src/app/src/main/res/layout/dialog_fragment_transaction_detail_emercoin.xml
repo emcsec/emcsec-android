@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/forgot_password_margin"
+    app:cardCornerRadius="35dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_restore_password">
+
+        <LinearLayout
+            android:layout_width="@dimen/transaction_detail_width"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date_in_details_tx"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"/>
+
+            <TextView
+                android:id="@+id/tv_date_transaction_detail_emercoin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_default_bg"
+                android:lines="1"
+                android:padding="3dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"
+                tools:text="12wwwwwwfffffffffffffffffffffffffffw "/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/transaction_detail_width"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/address_in_details_tx"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"/>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_default_bg"
+                android:padding="3dp"
+                android:scrollbars="none">
+
+                <TextView
+                    android:id="@+id/tv_address_transaction_detail_emercoin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lines="1"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSizeLarge"
+                    tools:text="12wwwwwww "/>
+            </HorizontalScrollView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/transaction_detail_width"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/category_in_details_tx"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"/>
+
+            <TextView
+                android:id="@+id/tv_category_transaction_detail_emercoin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_default_bg"
+                android:lines="1"
+                android:padding="3dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"
+                tools:text="Receive "/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/transaction_detail_width"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/amount_in_details_tx"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"/>
+
+            <TextView
+                android:id="@+id/tv_amount_transaction_detail_emercoin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_default_bg"
+                android:lines="1"
+                android:padding="3dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"
+                tools:text="0.00091037 EMC"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_fee"
+            android:layout_width="@dimen/transaction_detail_width"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:id="@+id/tv_fee_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fee_in_details_tx"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"/>
+
+            <TextView
+                android:id="@+id/tv_fee_transaction_detail_emercoin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_default_bg"
+                android:lines="1"
+                android:padding="3dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"
+                tools:text="0.0017 BTC"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/transaction_detail_width"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/transaction_id"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"/>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_default_bg"
+                android:padding="3dp"
+                android:scrollbars="none">
+
+                <TextView
+                    android:id="@+id/tv_tx_id_transaction_detail_emercoin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lines="1"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSizeLarge"
+                    tools:text="wwwwwwWwwwwwww "/>
+            </HorizontalScrollView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/transaction_detail_width"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/block_in_details_tx"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"/>
+
+            <TextView
+                android:id="@+id/tv_block_transaction_detail_emercoin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_default_bg"
+                android:lines="1"
+                android:padding="3dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"
+                tools:text="486061"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/padding_restore_password"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_repeat_transaction_detail_emercoin"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/btn_add_new_address_light_emc_bg"
+                android:fontFamily="sans-serif"
+                android:text="@string/repeat"
+                android:textColor="@drawable/text_selector"
+                android:textSize="@dimen/textSizeMedium"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/white"/>
+
+            <Button
+                android:id="@+id/btn_close_transaction_detail_emercoin"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/btn_cancel_new_address_light_emc_bg"
+                android:backgroundTint="@color/buttonCancelBitcoin"
+                android:fontFamily="sans-serif"
+                android:text="@string/close"
+                android:textColor="@drawable/text_selector"
+                android:textSize="@dimen/textSizeMedium"/>
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

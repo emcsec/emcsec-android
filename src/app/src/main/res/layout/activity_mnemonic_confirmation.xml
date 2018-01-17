@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                tools:context=".ui.activities.seedGenerationAndRestoring.MnemonicConfirmationActivity">
+
+    <LinearLayout
+        android:id="@+id/ll_header_mnemonic_confirmation"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@color/colorPrimary"
+        android:elevation="3dp"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/seed"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/generate_a_new_wallet_header"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSizeXLarge"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_header_mnemonic_confirmation">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="48dp"
+                android:layout_marginRight="48dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center"
+                android:text="@string/please_enter_all_the_seed_words_in_the_input_fields"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSizeLarge"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/layoutMnemonicInputsFieldsHeight"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:weightSum="6">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center">
+
+                    <EditText
+                        android:id="@+id/et_word_1"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_1"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+
+                    <View
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"/>
+
+
+                    <EditText
+                        android:id="@+id/et_word_7"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_7"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+
+                    <EditText
+                        android:id="@+id/et_word_2"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_2"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+
+                    <View
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"/>
+
+
+                    <EditText
+                        android:id="@+id/et_word_8"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_8"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+
+                    <EditText
+                        android:id="@+id/et_word_3"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_3"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+
+                    <View
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"/>
+
+
+                    <EditText
+                        android:id="@+id/et_word_9"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_9"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <EditText
+                        android:id="@+id/et_word_4"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_4"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+
+                    <View
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"/>
+
+                    <EditText
+                        android:id="@+id/et_word_10"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_10"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <EditText
+                        android:id="@+id/et_word_5"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_5"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+
+                    <View
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"/>
+
+                    <EditText
+                        android:id="@+id/et_word_11"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_11"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <EditText
+                        android:id="@+id/et_word_6"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_6"
+                        android:nextFocusDown="@id/et_word_7"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+
+                    <View
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"/>
+
+                    <EditText
+                        android:id="@+id/et_word_12"
+                        android:layout_width="130dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/edit_text_seed_confirm_bg"
+                        android:digits="@string/allowedCharacters"
+                        android:hint="@string/word_12"
+                        android:inputType="text"
+                        android:paddingStart="8dp"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="@dimen/textSizeXSmall"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_next"
+                android:layout_width="@dimen/width_of_auth_views"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/button_selector"
+                android:enabled="false"
+                android:text="@string/next"
+                android:textColor="@drawable/text_selector"
+                android:textSize="@dimen/textSizeMedium"/>
+
+            <TextView
+                android:id="@+id/tv_start_over"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/start_over"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/textSizeMedium"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

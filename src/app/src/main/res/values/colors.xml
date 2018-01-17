@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#9c72b1</color>
+    <color name="colorPrimaryDark">#6d507c</color>
+    <color name="colorAccent">#6b6b6b</color>
+
+
+    <color name="colorPrimaryLight">#c993e4</color>
+
+    <color name="buttonDisabled">#a0a0a0</color>
+    <color name="lightGray">#cfcfcf</color>
+    <color name="navigation_drawer_bg">#E0E0E0</color>
+    <color name="textDisabled">#3F3F3F</color>
+    <color name="red">#ff0000</color>
+    <color name="white">#ffffff</color>
+    <color name="turquoise">#FF2B7581</color>
+    <color name="black">#000000</color>
+    <color name="orange">#FC8335</color>
+    <color name="darkOrange">#8A481D</color>
+    <color name="defaultColor">#EEEEEE</color>
+    <color name="buttonCancelBitcoin">#4D4D4D</color>
+    <color name="colorItemNewAddressEmercoin">#A3D8C7</color>
+    <color name="colorItemNewAddressBitcoin">#F9C7A3</color>
+    <color name="translucent">#30000000</color>
+    <color name="colorEditItemAddress">#D8743C</color>
+    <color name="translucentWhite">#80ffffff</color>
+</resources>

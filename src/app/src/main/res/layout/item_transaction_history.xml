@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/rl_item_transaction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:paddingTop="8dp">
+
+    <ImageView
+        android:id="@+id/iv_type_item_transaction_history"
+        android:layout_width="@dimen/nav_icon_size"
+        android:layout_height="@dimen/nav_icon_size"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        tools:src="@drawable/ic_out_transaction"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_date_hourglass_balance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/item_text_margin">
+
+        <TextView
+            android:id="@+id/tv_date_item_transaction_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSizeMedium"
+            tools:text="26.09.2017"/>
+
+        <ImageView
+            android:id="@+id/iv_pending_transaction_item_transaction_history"
+            android:layout_width="18dp"
+            android:layout_height="16dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_toEndOf="@+id/tv_date_item_transaction_history"
+            android:src="@mipmap/ic_hourglass"
+            android:visibility="gone"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_amount_item_transaction_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:maxWidth="@dimen/transaction_amount_width"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSizeMedium"
+            android:textStyle="bold"
+            app:autoSizeMinTextSize="12sp"
+            app:autoSizeTextType="uniform"
+            tools:text="-9999999.99999999 BTC"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_address_item_transaction_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_date_hourglass_balance"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/item_text_margin"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-light"
+        android:lines="1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/textSizeMedium"
+        tools:text="BoatSLRHtKNgkdXEeobR76b53LETtpyT"/>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0.5dp"
+        android:layout_below="@id/tv_address_item_transaction_history"
+        android:layout_marginLeft="@dimen/item_text_margin"
+        android:background="@color/lightGray"/>
+</RelativeLayout>
