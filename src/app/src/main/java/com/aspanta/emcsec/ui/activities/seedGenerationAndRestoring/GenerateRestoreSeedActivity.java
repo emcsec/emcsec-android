@@ -35,9 +35,9 @@ public class GenerateRestoreSeedActivity extends AppCompatActivity {
             finish();
         }
 
-        SharedPreferencesHelper.getInstance().putStringValue(SERVER_HOST_BTC, "btcx.emercoin.com");
+        SharedPreferencesHelper.getInstance().putStringValue(SERVER_HOST_BTC, "btcx.emercoin.net");
         SharedPreferencesHelper.getInstance().putIntValue(SERVER_PORT_BTC, 50001);
-        SharedPreferencesHelper.getInstance().putStringValue(SERVER_HOST_EMC, "emcx.emercoin.com");
+        SharedPreferencesHelper.getInstance().putStringValue(SERVER_HOST_EMC, "emcx.emercoin.net");
         SharedPreferencesHelper.getInstance().putIntValue(SERVER_PORT_EMC, 9110);
 
         findViewById(R.id.btn_generate_seed).setOnClickListener(c ->
