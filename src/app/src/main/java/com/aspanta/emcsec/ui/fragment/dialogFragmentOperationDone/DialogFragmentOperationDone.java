@@ -15,6 +15,8 @@ import com.aspanta.emcsec.presenter.enterAnAddressEmercoinPresenter.IEnterAnAddr
 
 public class DialogFragmentOperationDone extends DialogFragment {
 
+    private static final String TAG = DialogFragmentOperationDone.class.getSimpleName();
+
     private static IEnterAnAddressEmercoinPresenter sEnterAnAddressEmercoinPresenter;
     private static IEnterAnAddressBitcoinPresenter sEnterAnAddressBitcoinPresenter;
 
@@ -50,5 +52,9 @@ public class DialogFragmentOperationDone extends DialogFragment {
             dismiss();
         });
         return view;
+    }
+
+    public String getCurrentTag(){
+        return TAG;
     }
 }

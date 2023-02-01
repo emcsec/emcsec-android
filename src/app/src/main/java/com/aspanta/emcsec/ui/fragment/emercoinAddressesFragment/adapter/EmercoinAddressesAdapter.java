@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,13 +28,20 @@ public class EmercoinAddressesAdapter extends RecyclerView.Adapter<EmercoinAddre
     private IEmercoinAddressesPresenter mEmercoinAddressesPresenter;
     private final ViewBinderHelper binderHelper = new ViewBinderHelper();
     private boolean mIsNewAddress;
+    private OnAddressClickedListener listener;
 
     public EmercoinAddressesAdapter(List<EmcAddress> mAddresses,
-                                    IEmercoinAddressesPresenter mEmercoinAddressesPresenter) {
+                                    IEmercoinAddressesPresenter mEmercoinAddressesPresenter,
+                                    OnAddressClickedListener listener) {
         this.mEmercoinAddressesPresenter = mEmercoinAddressesPresenter;
         this.mListAddresses = mAddresses;
+        this.listener = listener;
         binderHelper.setOpenOnlyOne(true);
 
+    }
+
+    public interface OnAddressClickedListener {
+        void exportPriv(String address);
     }
 
     @Override
@@ -51,16 +59,20 @@ public class EmercoinAddressesAdapter extends RecyclerView.Adapter<EmercoinAddre
 
     @Override
     public void onBindViewHolder(AddressesEmercoinViewHolder holder, int position) {
-        if(mIsNewAddress){
+        if (mIsNewAddress) {
             if (position == 0)
                 holder.llAddressItem.setBackgroundColor(ContextCompat.getColor
-                        (holder.editLayout.getContext(), R.color.colorItemNewAddressEmercoin));
+                        (holder.editAddress.getContext(), R.color.colorItemNewAddressEmercoin));
         }
         holder.tvLabel.setText(mListAddresses.get(position).getLabel());
         holder.tvAddress.setText(mListAddresses.get(position).getAddress());
         binderHelper.bind(holder.swipeLayout, mListAddresses.get(position).getAddress());
-        holder.editLayout.setOnClickListener(view -> {
+        holder.editAddress.setOnClickListener(view -> {
             mEmercoinAddressesPresenter.showEditDialog(mListAddresses.get(position));
+        });
+
+        holder.exportPriv.setOnClickListener(view -> {
+            listener.exportPriv(mListAddresses.get(position).getAddress());
         });
 
         holder.llAddressItem.setOnClickListener(view -> {
@@ -81,9 +93,9 @@ public class EmercoinAddressesAdapter extends RecyclerView.Adapter<EmercoinAddre
     class AddressesEmercoinViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvLabel, tvAddress;
-        LinearLayout llAddressItem;
+        RelativeLayout llAddressItem;
         SwipeRevealLayout swipeLayout;
-        View editLayout;
+        View editAddress, exportPriv;
 
 
         AddressesEmercoinViewHolder(View itemView) {
@@ -92,7 +104,8 @@ public class EmercoinAddressesAdapter extends RecyclerView.Adapter<EmercoinAddre
             tvAddress = itemView.findViewById(R.id.tv_address_address);
             llAddressItem = itemView.findViewById(R.id.rl_item_address);
             swipeLayout = itemView.findViewById(R.id.swipe_layout_item_address);
-            editLayout = itemView.findViewById(R.id.edit_layout);
+            editAddress = itemView.findViewById(R.id.edit_address);
+            exportPriv = itemView.findViewById(R.id.export_priv);
         }
     }
 }

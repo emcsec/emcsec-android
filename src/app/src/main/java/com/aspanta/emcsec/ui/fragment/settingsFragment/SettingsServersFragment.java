@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.ui.activities.MainActivity;
 import com.aspanta.emcsec.ui.fragment.IBaseFragment;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.dialogFragmentTheServerFor.DialogFragmentTheServerForBitcoin;
@@ -97,13 +97,13 @@ public class SettingsServersFragment extends Fragment implements IBaseFragment {
 
     public void setHostPortSSLEmc() {
 
-        mTvHostEmc.setText(SharedPreferencesHelper.getInstance().getStringValue(SERVER_HOST_EMC));
-        mTvPortEmc.setText(SharedPreferencesHelper.getInstance().getIntValue(SERVER_PORT_EMC) + "");
+        mTvHostEmc.setText(SPHelper.getInstance().getStringValue(SERVER_HOST_EMC));
+        mTvPortEmc.setText(SPHelper.getInstance().getIntValue(SERVER_PORT_EMC) + "");
     }
 
     public void setHostPortSSLBtc() {
 
-        mTvHostBtc.setText(SharedPreferencesHelper.getInstance().getStringValue(SERVER_HOST_BTC));
-        mTvPortBtc.setText(SharedPreferencesHelper.getInstance().getIntValue(SERVER_PORT_BTC) + "");
+        mTvHostBtc.setText(SPHelper.getInstance().getStringValue(SERVER_HOST_BTC));
+        mTvPortBtc.setText(SPHelper.getInstance().getIntValue(SERVER_PORT_BTC) + "");
     }
 }

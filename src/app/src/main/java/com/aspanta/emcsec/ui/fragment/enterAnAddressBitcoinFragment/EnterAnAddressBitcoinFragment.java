@@ -16,10 +16,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.presenter.enterAnAddressBitcoinPresenter.EnterAnAddressBitcoinPresenter;
 import com.aspanta.emcsec.presenter.enterAnAddressBitcoinPresenter.IEnterAnAddressBitcoinPresenter;
-import com.aspanta.emcsec.tools.Config;
 import com.aspanta.emcsec.ui.activities.MainActivity;
 import com.aspanta.emcsec.ui.fragment.dialogFragmentConfirmOperation.DialogFragmentConfirmOperationBitcoin;
 import com.aspanta.emcsec.ui.fragment.dialogFragmentOperationDone.DialogFragmentOperationDone;
@@ -27,8 +26,8 @@ import com.aspanta.emcsec.ui.fragment.dialogFragmentPleaseWait.DialogFragmentPle
 import com.aspanta.emcsec.ui.fragment.sendCoinFragment.SendCoinFragment;
 import com.aspanta.emcsec.ui.fragment.sendCoinFragment.sendBitcoinFragment.SendBitcoinFragment;
 
-import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.LegacyAddress;
 import org.bitcoinj.params.MainNetParams;
 
 import io.reactivex.Observable;
@@ -37,7 +36,7 @@ import io.reactivex.disposables.Disposable;
 
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.BTC_EXCHANGE_RATE_KEY;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
 import static com.aspanta.emcsec.tools.Config.LAST_FEE_VALUE;
 import static com.aspanta.emcsec.tools.Config.REGEX_AMOUNT;
@@ -92,10 +91,10 @@ public class EnterAnAddressBitcoinFragment extends Fragment implements IEnterAnA
     public void onResume() {
         super.onResume();
         if (listener != null) {
-            SharedPreferencesHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
+            SPHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
         }
-        if (SharedPreferencesHelper.getInstance().getIntValue(SEEKBAR_POSITION_KEY) == -1
-                && SharedPreferencesHelper.getInstance().getStringValue(SEEKBAR_VALUE_KEY).equals("")) {
+        if (SPHelper.getInstance().getIntValue(SEEKBAR_POSITION_KEY) == -1
+                && SPHelper.getInstance().getStringValue(SEEKBAR_VALUE_KEY).equals("")) {
             mSeekBar.setProgress(1);
             mTvSeekValue.setText("0.00148372");
         }
@@ -117,49 +116,49 @@ public class EnterAnAddressBitcoinFragment extends Fragment implements IEnterAnA
         init(v);
         mPresenter = new EnterAnAddressBitcoinPresenter(getContext(), this);
 
-        String currentCurrency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        String currentCurrency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         if (currentCurrency.equals("RUB")) {
             currentCurrency = "RUR";
         }
 
-        mTvBalanceBtc.setText(SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
-        String wholeRowBalanceBtc = "<b>~" + SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
-                currentCurrency + " (" + "<b>1 </b> BTC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(BTC_COURSE_KEY) + " </b>" +
+        mTvBalanceBtc.setText(SPHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
+        String wholeRowBalanceBtc = "<b>~" + SPHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
+                currentCurrency + " (" + "<b>1 </b> BTC = <b>" + SPHelper.getInstance().getStringValue(BTC_EXCHANGE_RATE_KEY) + " </b>" +
                 currentCurrency + ")";
 
         mTvWholeRowBalanceBtc.setText(Html.fromHtml(wholeRowBalanceBtc));
 
         String finalCurrentCurrency = currentCurrency;
         listener = (sharedPreferences, key) -> {
-            mTvBalanceBtc.setText(SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
-            mTvWholeRowBalanceBtc.setText(Html.fromHtml("<b>~" + SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
-                    finalCurrentCurrency + " (" + "<b>1 </b> BTC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(BTC_COURSE_KEY) + " </b>" +
+            mTvBalanceBtc.setText(SPHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
+            mTvWholeRowBalanceBtc.setText(Html.fromHtml("<b>~" + SPHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
+                    finalCurrentCurrency + " (" + "<b>1 </b> BTC = <b>" + SPHelper.getInstance().getStringValue(BTC_EXCHANGE_RATE_KEY) + " </b>" +
                     finalCurrentCurrency + ")"));
 
         };
-        SharedPreferencesHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
+        SPHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
 
         if (mParam1 != null && mParam2 != null) {
             mEtAddressBtc.setText(mParam1);
             mEtAmountBtc.setText(mParam2);
         }
 
-        mSeekBar.setProgress(SharedPreferencesHelper.getInstance().getIntValue(SEEKBAR_POSITION_KEY));
-        mTvSeekValue.setText(SharedPreferencesHelper.getInstance().getStringValue(SEEKBAR_VALUE_KEY));
+        mSeekBar.setProgress(SPHelper.getInstance().getIntValue(SEEKBAR_POSITION_KEY));
+        mTvSeekValue.setText(SPHelper.getInstance().getStringValue(SEEKBAR_VALUE_KEY));
 
         mSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
 
-        String lastFeeValue = SharedPreferencesHelper.getInstance().getStringValue(LAST_FEE_VALUE);
+        String lastFeeValue = SPHelper.getInstance().getStringValue(LAST_FEE_VALUE);
         mEtFee.setEnabled(false);
         if (lastFeeValue.isEmpty() | lastFeeValue.equals("?")) {
-            mEtFee.setText(SharedPreferencesHelper.getInstance().getStringValue(SEEKBAR_VALUE_KEY));
+            mEtFee.setText(SPHelper.getInstance().getStringValue(SEEKBAR_VALUE_KEY));
         } else {
             mEtFee.setText(lastFeeValue);
         }
         mRbRecommended.setOnClickListener(c -> {
             mSeekBar.setEnabled(true);
             if (lastFeeValue.isEmpty() | lastFeeValue.equals("?")) {
-                mEtFee.setText(SharedPreferencesHelper.getInstance().getStringValue(SEEKBAR_VALUE_KEY));
+                mEtFee.setText(SPHelper.getInstance().getStringValue(SEEKBAR_VALUE_KEY));
             } else {
                 mEtFee.setText(lastFeeValue);
             }
@@ -170,7 +169,7 @@ public class EnterAnAddressBitcoinFragment extends Fragment implements IEnterAnA
         mRbCustom.setOnClickListener(c -> {
             mSeekBar.setEnabled(false);
             if (lastFeeValue.isEmpty() | lastFeeValue.equals("?")) {
-                mEtFee.setText(SharedPreferencesHelper.getInstance().getStringValue(SEEKBAR_VALUE_KEY));
+                mEtFee.setText(SPHelper.getInstance().getStringValue(SEEKBAR_VALUE_KEY));
             } else {
                 mEtFee.setText(lastFeeValue);
             }
@@ -180,14 +179,14 @@ public class EnterAnAddressBitcoinFragment extends Fragment implements IEnterAnA
 
         mBtnSend.setOnClickListener(view -> {
             try {
-                Address.fromBase58(MainNetParams.get(), mEtAddressBtc.getText().toString());
+                LegacyAddress.fromBase58(MainNetParams.get(), mEtAddressBtc.getText().toString());
                 String fee;
                 if (mRbRecommended.isChecked()) {
                     fee = mTvSeekValue.getText().toString();
                 } else {
                     fee = mEtFee.getText().toString();
                 }
-                SharedPreferencesHelper.getInstance().putStringValue(LAST_FEE_VALUE, fee);
+                SPHelper.getInstance().putStringValue(LAST_FEE_VALUE, fee);
                 Log.d("FEE", fee);
                 DialogFragmentConfirmOperationBitcoin.
                         newInstance(mPresenter,
@@ -196,7 +195,7 @@ public class EnterAnAddressBitcoinFragment extends Fragment implements IEnterAnA
                                 mEtAddressBtc.getText().toString())
                         .show(getFragmentManager(), "");
             } catch (AddressFormatException afe) {
-                Config.showAlertDialog(getContext(), getString(R.string.enter_the_valid_address));
+                MainActivity.showAlertDialog(getContext(), getString(R.string.enter_the_valid_address));
             }
         });
 
@@ -399,9 +398,9 @@ public class EnterAnAddressBitcoinFragment extends Fragment implements IEnterAnA
     @Override
     public void onPause() {
         super.onPause();
-        SharedPreferencesHelper.getInstance()
+        SPHelper.getInstance()
                 .putIntValue(SEEKBAR_POSITION_KEY, mSeekBar.getProgress());
-        SharedPreferencesHelper.getInstance()
+        SPHelper.getInstance()
                 .putStringValue(SEEKBAR_VALUE_KEY, mTvSeekValue.getText().toString());
     }
 
@@ -409,7 +408,7 @@ public class EnterAnAddressBitcoinFragment extends Fragment implements IEnterAnA
     public void onStop() {
         super.onStop();
         if (listener != null) {
-            SharedPreferencesHelper.getInstance().getSharedPreferencesLink().unregisterOnSharedPreferenceChangeListener(listener);
+            SPHelper.getInstance().getSharedPreferencesLink().unregisterOnSharedPreferenceChangeListener(listener);
         }
     }
 
@@ -439,14 +438,20 @@ public class EnterAnAddressBitcoinFragment extends Fragment implements IEnterAnA
     @Override
     public void hidePleaseWaitDialog() {
         if (dialog != null) {
-            dialog.dismiss();
+            dialog.dismissAllowingStateLoss();
         }
     }
 
     @Override
     public void showSuccessDialog() {
-        DialogFragmentOperationDone.newInstance(null, mPresenter)
-                .show(getFragmentManager(), "");
+
+        DialogFragmentOperationDone dialogFragmentOperationDone =
+                DialogFragmentOperationDone.
+                        newInstance(null, mPresenter);
+        getFragmentManager()
+                .beginTransaction()
+                .add(dialogFragmentOperationDone, dialogFragmentOperationDone.getCurrentTag())
+                .commitAllowingStateLoss();
     }
 
     @Override

@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.ui.activities.MainActivity;
 import com.aspanta.emcsec.ui.fragment.IBaseFragment;
 import com.aspanta.emcsec.ui.fragment.bitcoinAddressesFragment.BitcoinAddressesFragment;
@@ -21,7 +21,7 @@ import com.aspanta.emcsec.ui.fragment.sendCoinFragment.sendBitcoinFragment.SendB
 
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.BTC_EXCHANGE_RATE_KEY;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
 
 
@@ -47,14 +47,14 @@ public class BitcoinOperationsFragment extends Fragment implements IBaseFragment
         View view = inflater.inflate(R.layout.fragment_bitcoin_operations, container, false);
         init(view);
 
-        String currentCurrency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        String currentCurrency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         if (currentCurrency.equals("RUB")) {
             currentCurrency = "RUR";
         }
 
-        mTvBalanceBtc.setText(SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
-        String wholeRowBalanceBtc = "<b>~" + SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
-                currentCurrency + " (" + "<b>1 </b> BTC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(BTC_COURSE_KEY) + " </b>" +
+        mTvBalanceBtc.setText(SPHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
+        String wholeRowBalanceBtc = "<b>~" + SPHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
+                currentCurrency + " (" + "<b>1 </b> BTC = <b>" + SPHelper.getInstance().getStringValue(BTC_EXCHANGE_RATE_KEY) + " </b>" +
                 currentCurrency + ")";
 
         mTvWholeRowBalanceBtc.setText(Html.fromHtml(wholeRowBalanceBtc));

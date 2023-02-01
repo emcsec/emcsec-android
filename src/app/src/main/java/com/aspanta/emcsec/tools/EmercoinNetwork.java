@@ -15,7 +15,7 @@ public class EmercoinNetwork extends AbstractBitcoinNetParams {
         packetMagic = 0xe6e8e9e5;
         bip32HeaderPub = 0x0488b21e; //The 4 byte header that serializes in base58 to "xpub".
         bip32HeaderPriv = 0x0488ade4; //The 4 byte header that serializes in base58 to "xprv"
-        acceptableAddressCodes = new int[]{addressHeader, p2shHeader};
+//        acceptableAddressCodes = new int[]{addressHeader, p2shHeader};
     }
 
     public static synchronized NetworkParameters get() {

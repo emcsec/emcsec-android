@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.aspanta.emcsec.R;
+import com.aspanta.emcsec.tools.MnemonicCodeCustom;
 
 import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
@@ -70,7 +71,7 @@ public class SeedRestoringActivity extends AppCompatActivity {
         ArrayList<String> mnemonicList = getMnemonicList();
 
         try {
-            MnemonicCode mnemonicCode = new MnemonicCode();
+            MnemonicCodeCustom mnemonicCode = new MnemonicCodeCustom();
             mnemonicCode.check(mnemonicList);
 
             Intent intent = new Intent(this, SeedRestoringSuccessfullyActivity.class);
@@ -79,6 +80,7 @@ public class SeedRestoringActivity extends AppCompatActivity {
             finish();
 
         } catch (IOException | MnemonicException e) {
+            e.printStackTrace();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder
                     .setTitle(getString(R.string.error))
@@ -116,7 +118,6 @@ public class SeedRestoringActivity extends AppCompatActivity {
                 .map(inputText -> inputText.length() != 0);
         mWord12Observable = textChanges(mEtWord12)
                 .map(inputText -> inputText.length() != 0);
-
 
         mFirst6WordObservable = Observable
                 .combineLatest(

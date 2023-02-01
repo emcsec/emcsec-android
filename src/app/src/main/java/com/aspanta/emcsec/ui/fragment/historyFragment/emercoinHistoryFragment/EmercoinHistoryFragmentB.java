@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.historyPojos.EmcTransaction;
 import com.aspanta.emcsec.presenter.historyPresenter.HistoryEmercoinPresenter;
 import com.aspanta.emcsec.ui.fragment.dialogFragmentPleaseWait.DialogFragmentPleaseWaitWithProgress;
@@ -27,8 +27,8 @@ import java.util.List;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.EMC_COURSE_KEY;
-import static com.aspanta.emcsec.tools.Config.showAlertDialog;
+import static com.aspanta.emcsec.tools.Config.EMC_EXCHANGE_RATE_KEY;
+import static com.aspanta.emcsec.ui.activities.MainActivity.showAlertDialog;
 import static com.aspanta.emcsec.tools.InternetConnection.internetConnectionChecking;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.downloadProgressDashboard;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.totalProgressDashboard;
@@ -53,7 +53,7 @@ public class EmercoinHistoryFragmentB extends Fragment implements IEmercoinHisto
     public void onResume() {
         super.onResume();
         if (listener != null) {
-            SharedPreferencesHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
+            SPHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
         }
     }
 
@@ -61,7 +61,7 @@ public class EmercoinHistoryFragmentB extends Fragment implements IEmercoinHisto
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (mPresenter == null) {
-            mPresenter = new HistoryEmercoinPresenter(getContext(), this, null);
+            mPresenter = new HistoryEmercoinPresenter(getActivity(), this, null);
         }
 //        setUserVisibleHint(false);
     }
@@ -86,30 +86,32 @@ public class EmercoinHistoryFragmentB extends Fragment implements IEmercoinHisto
                 mSwipeRefreshLayout.refreshComplete();
             } else {
                 String error = getString(R.string.could_not_connect);
-                showAlertDialog(getContext(), error);
+                showAlertDialog(getActivity(), error);
+                mSwipeRefreshLayout.refreshComplete();
+
             }
         });
 
-        String currentCurrency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        String currentCurrency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         if (currentCurrency.equals("RUB")) {
             currentCurrency = "RUR";
         }
 
-        mTvBalanceEmc.setText(SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
-        String wholeRowBalanceEmc = "<b>~" + SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
-                currentCurrency + " (" + "<b>1 </b> EMC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(EMC_COURSE_KEY) + " </b>" +
+        mTvBalanceEmc.setText(SPHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
+        String wholeRowBalanceEmc = "<b>~" + SPHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
+                currentCurrency + " (" + "<b>1 </b> EMC = <b>" + SPHelper.getInstance().getStringValue(EMC_EXCHANGE_RATE_KEY) + " </b>" +
                 currentCurrency + ")";
 
         mTvWholeRowBalanceEmc.setText(Html.fromHtml(wholeRowBalanceEmc));
 
         String finalCurrentCurrency = currentCurrency;
         listener = (sharedPreferences, key) -> {
-            mTvBalanceEmc.setText(SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
-            mTvWholeRowBalanceEmc.setText(Html.fromHtml("<b>~" + SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
-                    finalCurrentCurrency + " (" + "<b>1 </b> EMC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(EMC_COURSE_KEY) + " </b>" +
+            mTvBalanceEmc.setText(SPHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
+            mTvWholeRowBalanceEmc.setText(Html.fromHtml("<b>~" + SPHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
+                    finalCurrentCurrency + " (" + "<b>1 </b> EMC = <b>" + SPHelper.getInstance().getStringValue(EMC_EXCHANGE_RATE_KEY) + " </b>" +
                     finalCurrentCurrency + ")"));
         };
-        SharedPreferencesHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
+        SPHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
 
         return v;
     }
@@ -154,7 +156,7 @@ public class EmercoinHistoryFragmentB extends Fragment implements IEmercoinHisto
 
     public void hidePleaseWaitDialog() {
         if (dialog != null) {
-            dialog.dismiss();
+            dialog.dismissAllowingStateLoss();
         }
     }
 
@@ -176,7 +178,7 @@ public class EmercoinHistoryFragmentB extends Fragment implements IEmercoinHisto
     public void onStop() {
         super.onStop();
         if (listener != null) {
-            SharedPreferencesHelper.getInstance().getSharedPreferencesLink().unregisterOnSharedPreferenceChangeListener(listener);
+            SPHelper.getInstance().getSharedPreferencesLink().unregisterOnSharedPreferenceChangeListener(listener);
         }
     }
 

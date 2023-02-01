@@ -7,7 +7,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.MainDatabase;
 
 public class App extends Application {
@@ -20,7 +20,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         adjustFontScale(getResources().getConfiguration());
-        SharedPreferencesHelper.getInstance().initialize(this);
+        SPHelper.getInstance().initialize(this);
         dbInstance = Room
                 .databaseBuilder(getApplicationContext(), MainDatabase.class, "main_database")
                 .allowMainThreadQueries()

@@ -14,7 +14,7 @@ import android.widget.Button;
 
 import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.EmcAddressForChange;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.SettingsChangeAddressesFragment;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.dialogFragmentAddressesForTheChange.adapter.AddressesForChangeAdapterEmc;
@@ -30,7 +30,7 @@ public class DialogFragmentAddressesForTheChangeEmc extends DialogFragment {
     private List<EmcAddressForChange> mListEmcAddresses;
     private static String sCurrentAddress;
     private AddressesForChangeAdapterEmc mAddressesForChangeAdapterEmc;
-    public static String addressForChangeEmc = SharedPreferencesHelper.getInstance().getStringValue(CHANGE_ADDRESS_EMC);
+    public static String addressForChangeEmc = SPHelper.getInstance().getStringValue(CHANGE_ADDRESS_EMC);
 
     static SettingsChangeAddressesFragment sSettingsChangeAddressesFragment;
 
@@ -63,7 +63,7 @@ public class DialogFragmentAddressesForTheChangeEmc extends DialogFragment {
         setEmcAddressesList(mListEmcAddresses);
 
         mBtnSave.setOnClickListener(o -> {
-            SharedPreferencesHelper.getInstance().putStringValue(CHANGE_ADDRESS_EMC, addressForChangeEmc);
+            SPHelper.getInstance().putStringValue(CHANGE_ADDRESS_EMC, addressForChangeEmc);
             sSettingsChangeAddressesFragment.setAddressForChangeEmc();
             dismiss();
         });

@@ -43,7 +43,6 @@ public class BitcionReceivePresenter implements IBitcionReceivePresenter {
         mContext = context;
         mFragment = fragment;
         mMultiFormatWriter = new MultiFormatWriter();
-
         mListAddresses = App.getDbInstance().btcAddressDao().getAll();
     }
 

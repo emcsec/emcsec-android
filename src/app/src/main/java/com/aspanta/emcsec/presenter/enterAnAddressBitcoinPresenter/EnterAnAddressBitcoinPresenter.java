@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.BtcAddress;
 import com.aspanta.emcsec.db.room.BtcAddressForChange;
 import com.aspanta.emcsec.db.room.utxosUnconfirmed.UTXOBitcoinAlreadyUsed;
@@ -24,8 +24,8 @@ import com.aspanta.emcsec.ui.fragment.sendCoinFragment.SendCoinFragment;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.LegacyAddress;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.core.ScriptException;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
@@ -46,10 +46,14 @@ import java.util.List;
 
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.BTC_EXCHANGE_RATE_KEY;
 import static com.aspanta.emcsec.tools.Config.CHANGE_ADDRESS_BTC;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
-import static com.aspanta.emcsec.tools.Config.showAlertDialog;
+import static com.aspanta.emcsec.tools.Config.METHOD_GET_BALANCE;
+import static com.aspanta.emcsec.tools.Config.METHOD_LISTUNSPENT;
+import static com.aspanta.emcsec.tools.Config.METHOD_TX_BROADCAST;
+import static com.aspanta.emcsec.tools.JsonRpcHelper.createRpcRequest;
+import static com.aspanta.emcsec.ui.activities.MainActivity.showAlertDialog;
 import static com.aspanta.emcsec.tools.InternetConnection.internetConnectionChecking;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.downloadProgressDashboard;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.totalProgressDashboard;
@@ -57,13 +61,15 @@ import static org.bitcoinj.core.Utils.HEX;
 
 public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPresenter {
 
+    private static final String TAG = EnterAnAddressBitcoinPresenter.class.getSimpleName();
+
     private IEnterAnAddressBitcoinFragment mFragment;
     private Context mContext;
 
     //fields for getting balance
     private String balanceBtc;
     private int countBtc;
-    private int satoshiSumBtc;
+    private long satoshiSumBtc;
     private String currency;
 
     private NetworkParameters params = MainNetParams.get();
@@ -141,7 +147,7 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
         this.addressToSend = address;
         this.amountToSend = (long) (Double.valueOf(amountToSend) * 100000000);
 
-        String balance = SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_KEY);
+        String balance = SPHelper.getInstance().getStringValue(BTC_BALANCE_KEY);
         if (balance != null && !balance.equals("") && !balance.equals("?")) {
             long balanceLong = (long) (Double.valueOf(balance) * 100000000);
             if (balanceLong <= this.amountToSend) {
@@ -150,7 +156,7 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
             }
         }
 
-        addressForChange = SharedPreferencesHelper.getInstance().getStringValue(CHANGE_ADDRESS_BTC);
+        addressForChange = SPHelper.getInstance().getStringValue(CHANGE_ADDRESS_BTC);
         mFragment.showPleaseWaitDialog();
         mFragment.setDownloadProgress(downloadProgressDashboard);
         mFragment.setTotalProgress(totalProgressDashboard);
@@ -179,7 +185,8 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
             String address = mListBtcAddresses.get(positionGetListUnspent);
             downloadProgressDashboard++;
             mConnectTaskBtc.doProgress();
-            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 6,\"method\":\"blockchain.address.listunspent\",\"params\":[\"" + address + "\"]}";
+
+            String jsonRequest = createRpcRequest(6, METHOD_LISTUNSPENT, address);
             mTcpClientBtc.sendMessage(jsonRequest);
         }
     }
@@ -190,7 +197,7 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
         @Override
         protected TcpClientBtc doInBackground(String... message) {
 
-            mTcpClientBtc = new TcpClientBtc(response -> {
+            mTcpClientBtc = new TcpClientBtc((String response) -> {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     if (jsonObject.getInt("id") == 3) {
@@ -210,7 +217,7 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
                             JSONObject jsonObject1 = getUnspentJSONArray.getJSONObject(i);
                             String address = mListBtcAddresses.get(positionGetListUnspent);
 
-                            Address address1 = Address.fromBase58(params, address);
+                            Address address1 = Address.fromString(params, address);
 
                             Log.d("addressForUtxo", address);
                             Log.d("tx_hash", jsonObject1.getString("tx_hash"));
@@ -234,7 +241,7 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
                             List<UTXOBitcoin> utxoBitcoinListLocal = new ArrayList<>();
                             for (UTXOBitcoinAlreadyUsed utxoBitcoinAlreadyUsed : mUTXOBitcoinAlreadyUsedList) {
 
-                                Address address1 = Address.fromBase58(params, utxoBitcoinAlreadyUsed.getAddress());
+                                Address address1 = Address.fromString(params, utxoBitcoinAlreadyUsed.getAddress());
 
                                 Sha256Hash sha256Hash = Sha256Hash.wrap(Utils.HEX.decode(utxoBitcoinAlreadyUsed.getTx_id()));
                                 Script scriptForUTXO = ScriptBuilder.createOutputScript(address1); // creating script for UTXOEmercoin
@@ -250,7 +257,7 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
 
                             for (UTXOBitcoinFromChange utxoBitcoinFromChange : mUTXOBitcoinFromChangeList) {
 
-                                Address address1 = Address.fromBase58(params, utxoBitcoinFromChange.getAddress());
+                                Address address1 = Address.fromString(params, utxoBitcoinFromChange.getAddress());
 
                                 Sha256Hash sha256Hash = Sha256Hash.wrap(Utils.HEX.decode(utxoBitcoinFromChange.getTx_id()));
                                 Script scriptForUTXO = ScriptBuilder.createOutputScript(address1); // creating script for UTXOBitcoin
@@ -267,10 +274,10 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
                                     Log.d("utxosValue on start of for each  ", utxosValue + "");
 
                                     /*
-                                    *  Formation an outpoint with position of utxo in previous transaction
-                                    *  and with hash of previous transaction.
-                                    *  Signing this outpoint with privKey and formation a signed input.
-                                    */
+                                     *  Formation an outpoint with position of utxo in previous transaction
+                                     *  and with hash of previous transaction.
+                                     *  Signing this outpoint with privKey and formation a signed input.
+                                     */
 
                                     mUTXOBitcoinAlreadyUsedList.add(new UTXOBitcoinAlreadyUsed(
                                             utxo.getHash().toString(),
@@ -281,45 +288,32 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
                                     ));
 
                                     TransactionOutPoint outPoint = new TransactionOutPoint(params, utxo.getIndex(), utxo.getHash());
-                                    TransactionInput transactionInput = new TransactionInput(params, transaction, new byte[0], outPoint);
+                                    TransactionInput transactionInput = new TransactionInput(params, transaction, new byte[]{}, outPoint);
                                     transaction.addInput(transactionInput);
 
                                     if (utxosValue > amountToSend) {
 
+                                        Log.d(TAG, "utxosValue > amountToSend");
+
                                         transaction.clearOutputs();
                                         //adding an output with amount for sending and an address of recipient
-                                        transaction.addOutput(Coin.valueOf(amountToSend), Address.fromBase58(params, addressToSend));
+                                        transaction.addOutput(Coin.valueOf(amountToSend), Address.fromString(params, addressToSend));
 
                                         if (utxosValue - amountToSend >= 546) {
 
                                             transaction.clearOutputs();
                                             //adding an output with amount for sending and an address of recipient
-                                            transaction.addOutput(Coin.valueOf(amountToSend), Address.fromBase58(params, addressToSend));
+                                            transaction.addOutput(Coin.valueOf(amountToSend), Address.fromString(params, addressToSend));
                                             //adding an output with value for change without fee and an address for change
                                             transaction.addOutput(Coin.valueOf(utxosValue - amountToSend),
-                                                    Address.fromBase58(params, addressForChange)); // Address for change
+                                                    Address.fromString(params, addressForChange)); // Address for change
                                         }
 
                                         if (transaction.getOutputs().size() == 1) {
 
-                                            //signing inputs
-                                            for (int i = 0; i < transaction.getInputs().size(); i++) {
-                                                TransactionInput transactionInput1 = transaction.getInput(i);
-                                                byte[] privKeyBytes = HEX.decode(SharedPreferencesHelper.getInstance().getStringValue(mUTXOs.get(i).getAddress()));
-                                                ECKey ecKey = ECKey.fromPrivate(privKeyBytes);
-                                                Script scriptPubKey = ScriptBuilder.createOutputScript(Address.fromBase58(params, mUTXOs.get(i).getAddress()));
-                                                Sha256Hash hash = transaction.hashForSignature(i, scriptPubKey, Transaction.SigHash.SINGLE, true);
-                                                ECKey.ECDSASignature ecSig = ecKey.sign(hash);
-                                                TransactionSignature txSig = new TransactionSignature(ecSig, Transaction.SigHash.SINGLE, true);
-                                                if (scriptPubKey.isSentToRawPubKey()) {
-                                                    transactionInput1.setScriptSig(ScriptBuilder.createInputScript(txSig));
-                                                } else {
-                                                    if (!scriptPubKey.isSentToAddress()) {
-                                                        throw new ScriptException("Don\'t know how to sign for this kind of scriptPubKey: " + scriptPubKey);
-                                                    }
-                                                    transactionInput1.setScriptSig(ScriptBuilder.createInputScript(txSig, ecKey));
-                                                }
-                                            }
+                                            Log.d(TAG, "OUTPUT = " + transaction.getOutputs().size());
+
+                                            signInputs();
 
                                             byte[] bytesRawTransaction = transaction.bitcoinSerialize();
                                             String rawTransaction = HEX.encode(bytesRawTransaction);
@@ -332,7 +326,7 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
 
                                             if (utxosValue - amountToSend > fee) {
 //                                                publishProgress("1", "MOCK");
-                                                String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 7,\"method\":\"blockchain.transaction.broadcast\",\"params\":[\"" + rawTransaction + "\"]}";
+                                                String jsonRequest = createRpcRequest(7, METHOD_TX_BROADCAST, rawTransaction);
                                                 mTcpClientBtc.sendMessage(jsonRequest);
                                                 done = true;
                                             }
@@ -340,6 +334,8 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
                                             mUTXOBitcoinFromChange = null;
 
                                         } else {
+
+                                            Log.d(TAG, "OUTPUT = " + transaction.getOutputs().size());
 
                                             //saving UnconfirmedUTXO
                                             int txOutputSize = transaction.getOutputs().size();
@@ -352,30 +348,12 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
                                                     System.currentTimeMillis());
 
                                             //signing inputs
-                                            for (int i = 0; i < transaction.getInputs().size(); i++) {
-                                                TransactionInput transactionInput1 = transaction.getInput(i);
-                                                byte[] privKeyBytes = HEX.decode(SharedPreferencesHelper.getInstance().getStringValue(mUTXOs.get(i).getAddress()));
-                                                ECKey ecKey = ECKey.fromPrivate(privKeyBytes);
-                                                Script scriptPubKey = ScriptBuilder.createOutputScript(Address.fromBase58(params, mUTXOs.get(i).getAddress()));
-                                                Sha256Hash hash = transaction.hashForSignature(i, scriptPubKey, Transaction.SigHash.SINGLE, true);
-                                                ECKey.ECDSASignature ecSig = ecKey.sign(hash);
-                                                TransactionSignature txSig = new TransactionSignature(ecSig, Transaction.SigHash.SINGLE, true);
-                                                if (scriptPubKey.isSentToRawPubKey()) {
-                                                    transactionInput1.setScriptSig(ScriptBuilder.createInputScript(txSig));
-                                                } else {
-                                                    if (!scriptPubKey.isSentToAddress()) {
-                                                        throw new ScriptException("Don\'t know how to sign for this kind of scriptPubKey: " + scriptPubKey);
-                                                    }
-                                                    transactionInput1.setScriptSig(ScriptBuilder.createInputScript(txSig, ecKey));
-                                                }
-                                            }
+                                            String rawBeforeSigning = HEX.encode(transaction.bitcoinSerialize());
+                                            Log.d("RAW BEFORE SIGNING", rawBeforeSigning);
+                                            signInputs();
 
                                             byte[] bytesRawTransaction2 = transaction.bitcoinSerialize();
-                                            String rawTransaction2 = HEX.encode(bytesRawTransaction2);
                                             long sizeOfRawTransaction2 = bytesRawTransaction2.length;
-
-                                            Log.d("rawTransaction2", rawTransaction2);
-                                            Log.d("sizeOfRawTransaction2", sizeOfRawTransaction2 + "");
 
                                             //calculation fee for this transaction with value of feePerKb
                                             Coin fee = Coin.valueOf(feePerKb).multiply(sizeOfRawTransaction2).divide(1000);
@@ -385,20 +363,31 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
                                             Coin changeWithoutFee = change.subtract(fee);
 
                                             Log.d("amountToSend", amountToSend + "");
-                                            Log.d("changeWithoutFee", changeWithoutFee.longValue() + "");
-                                            Log.d("fee", fee.longValue() + "");
                                             Log.d("change", change.longValue() + "");
+                                            Log.d("fee", fee.longValue() + "");
+                                            Log.d("changeWithoutFee", changeWithoutFee.longValue() + "");
 
                                             if (changeWithoutFee.longValue() >= 0) {
 
-                                                Log.d("changeWithoutFee", changeWithoutFee.longValue() + "");
+                                                Log.d(TAG, "changeWithoutFee.longValue() >= 0");
+
                                                 transaction.getOutput(1).setValue(changeWithoutFee);
+
+                                                signInputs();
+                                                transaction.verify();
+
                                                 byte[] bytesRawTransaction3 = transaction.bitcoinSerialize();
                                                 String rawTransaction3 = HEX.encode(bytesRawTransaction3);
+                                                long sizeOfRawTransaction3 = bytesRawTransaction3.length;
+
+                                                Log.d("amountToSend", amountToSend + "");
+                                                Log.d("change", change.longValue() + "");
+                                                Log.d("fee", fee.longValue() + "");
+                                                Log.d("changeWithoutFee", changeWithoutFee.longValue() + "");
+                                                Log.d("sizeOfRawTransaction3", sizeOfRawTransaction3 + "");
                                                 Log.d("rawTransaction3", rawTransaction3);
 
-//                                                publishProgress("1", "MOCK");
-                                                String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 7,\"method\":\"blockchain.transaction.broadcast\",\"params\":[\"" + rawTransaction3 + "\"]}";
+                                                String jsonRequest = createRpcRequest(7, METHOD_TX_BROADCAST, rawTransaction3);
                                                 mTcpClientBtc.sendMessage(jsonRequest);
                                                 done = true;
                                             }
@@ -536,7 +525,7 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
     @Override
     public void getBtcBalance() {
 
-        currency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        currency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         Log.d("CURRENT_CURRENCY", currency);
 
         balanceBtc = null;
@@ -584,10 +573,10 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
                         Log.d("balanceUnconfirmed", balanceUnconfirmed);
 
                         if (balanceUnconfirmed.contains("-") | mListBtcAddressesForChange.contains(mListBtcAddresses.get(countBtc))) {
-                            int totalValue = Integer.valueOf(balanceConfirmed) + Integer.valueOf(balanceUnconfirmed);
+                            long totalValue = Long.valueOf(balanceConfirmed) + Long.valueOf(balanceUnconfirmed);
                             satoshiSumBtc += totalValue;
                         } else {
-                            satoshiSumBtc += Integer.valueOf(balanceConfirmed);
+                            satoshiSumBtc += Long.valueOf(balanceConfirmed);
                         }
 
                         countBtc++;
@@ -634,13 +623,13 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
             } else {
                 BigDecimal balanceBtcBigDecimal = new BigDecimal(satoshiSumBtc).divide(new BigDecimal(100000000));
                 balanceBtc = String.valueOf(balanceBtcBigDecimal);
-                SharedPreferencesHelper.getInstance().putStringValue(BTC_BALANCE_KEY, balanceBtc);
+                SPHelper.getInstance().putStringValue(BTC_BALANCE_KEY, balanceBtc);
 
-                String courseBtc = SharedPreferencesHelper.getInstance().getStringValue(BTC_COURSE_KEY);
+                String courseBtc = SPHelper.getInstance().getStringValue(BTC_EXCHANGE_RATE_KEY);
                 BigDecimal courseBigDecimal = new BigDecimal(courseBtc);
 
                 BigDecimal balanceBtcInUsdBigDecimal = courseBigDecimal.multiply(balanceBtcBigDecimal);
-                SharedPreferencesHelper.getInstance().putStringValue(BTC_BALANCE_IN_USD_KEY,
+                SPHelper.getInstance().putStringValue(BTC_BALANCE_IN_USD_KEY,
                         String.valueOf(balanceBtcInUsdBigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP)));
 
                 Log.d("BALANCE BTC", balanceBtc);
@@ -666,8 +655,33 @@ public class EnterAnAddressBitcoinPresenter implements IEnterAnAddressBitcoinPre
         if (mTcpClientBtc != null) {
             downloadProgressDashboard++;
             mConnectTaskBtcGetBalance.doProgress();
-            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 4,\"method\":\"blockchain.address.get_balance\",\"params\":[\"" + btcAddress + "\"]}";
+            String jsonRequest = createRpcRequest(4, METHOD_GET_BALANCE, btcAddress);
             mTcpClientBtc.sendMessage(jsonRequest);
+        }
+    }
+
+    private void signInputs() {
+        for (int i = 0; i < transaction.getInputs().size(); i++) {
+
+            TransactionInput transactionInput1 = transaction.getInput(i);
+
+            String addressUtxo = mUTXOs.get(i).getAddress();
+
+            byte[] privKeyBytes = HEX.decode(SPHelper.getInstance().getStringValue(addressUtxo));
+            ECKey ecKey = ECKey.fromPrivate(privKeyBytes);
+
+            Script scriptPubKey = ScriptBuilder.createOutputScript(LegacyAddress.fromBase58(params, addressUtxo));
+            Log.d(TAG, scriptPubKey.toString());
+
+            Sha256Hash hash = transaction.hashForSignature(i, scriptPubKey, Transaction.SigHash.ALL, false);
+            Log.d(TAG, hash.toString());
+            ECKey.ECDSASignature ecSig = ecKey.sign(hash);
+
+            TransactionSignature txSig = new TransactionSignature(ecSig, Transaction.SigHash.ALL, false);
+
+            Script inputScript = ScriptBuilder.createInputScript(txSig, ecKey);
+
+            transactionInput1.setScriptSig(inputScript);
         }
     }
 }

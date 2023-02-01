@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.ui.activities.MainActivity;
 import com.aspanta.emcsec.ui.fragment.IBaseFragment;
 import com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment;
@@ -22,7 +22,7 @@ import com.aspanta.emcsec.ui.fragment.sendCoinFragment.sendEmercoinFragment.Send
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.EMC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.EMC_EXCHANGE_RATE_KEY;
 
 public class EmercoinOperationsFragment extends Fragment implements IBaseFragment {
 
@@ -47,14 +47,14 @@ public class EmercoinOperationsFragment extends Fragment implements IBaseFragmen
         View v = inflater.inflate(R.layout.fragment_emercoin_operations, container, false);
         init(v);
 
-        String currentCurrency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        String currentCurrency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         if (currentCurrency.equals("RUB")) {
             currentCurrency = "RUR";
         }
 
-        mTvBalanceEmc.setText(SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
-        String wholeRowBalanceEmc = "<b>~" + SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
-                currentCurrency + " (" + "<b>1 </b> EMC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(EMC_COURSE_KEY) + " </b>" +
+        mTvBalanceEmc.setText(SPHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
+        String wholeRowBalanceEmc = "<b>~" + SPHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
+                currentCurrency + " (" + "<b>1 </b> EMC = <b>" + SPHelper.getInstance().getStringValue(EMC_EXCHANGE_RATE_KEY) + " </b>" +
                 currentCurrency + ")";
 
         mTvWholeRowBalanceEmc.setText(Html.fromHtml(wholeRowBalanceEmc));

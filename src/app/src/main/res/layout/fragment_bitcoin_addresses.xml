@@ -1,10 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:autofit="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
                 android:layout_width="32dp"
                 android:layout_height="28dp"
                 android:layout_marginRight="8dp"
-                android:src="@drawable/ic_bitcoin"/>
+                android:src="@drawable/ic_bitcoin" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
                 android:text="@string/bitcoin"
                 android:textColor="@color/white"
                 android:textSize="@dimen/textSizeXLarge"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -56,7 +56,7 @@
                 android:textSize="@dimen/textSizeXXLarge"
                 app:autoSizeMinTextSize="@dimen/textSizeMedium"
                 app:autoSizeTextType="uniform"
-                tools:text="999999999.99999999 BTC"/>
+                tools:text="999999999.99999999 BTC" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/tv_whole_row_btc"
@@ -71,7 +71,7 @@
                 android:textSize="@dimen/textSizeXSmall"
                 app:autoSizeMinTextSize="@dimen/textSizeSmall"
                 app:autoSizeTextType="uniform"
-                tools:text="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"/>
+                tools:text="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww" />
         </LinearLayout>
     </LinearLayout>
 
@@ -86,13 +86,44 @@
             android:layout_gravity="center"
             android:text="@string/my_addresses"
             android:textColor="@color/orange"
-            android:textSize="@dimen/textSizeMedium"/>
+            android:textSize="@dimen/textSizeMedium" />
 
     </FrameLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_bitcoin_addresses"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"/>
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/lightGray"
+                android:padding="@dimen/divider_xs"
+                android:text="@string/my_addresses" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_bitcoin_addresses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/lightGray"
+                android:padding="@dimen/divider_xs"
+                android:text="@string/addresses_for_the_change" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_bitcoin_addresses_change"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

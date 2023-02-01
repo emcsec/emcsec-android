@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.aspanta.emcsec">
 
-    <uses-sdk
-        android:minSdkVersion="21"
-        android:targetSdkVersion="27"/>
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false"/>
@@ -16,6 +12,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission-sdk-23 android:name="android.permission.INTERNET"/>
@@ -65,10 +62,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.StatusBar"/>
         <activity
-            android:name=".ui.activities.seedGenerationAndRestoring.AddressesBtcEmcActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.StatusBar"/>
-        <activity
             android:name=".ui.activities.seedGenerationAndRestoring.AttentionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.StatusBar"/>
@@ -91,11 +84,6 @@
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
-        </activity>
-        <activity android:name=".ui.activities.SetUpAndConfirmPinActivity">
-
-        </activity>
-        <activity android:name=".ui.activities.EnterPinActivity">
         </activity>
     </application>
 </manifest>

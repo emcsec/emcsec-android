@@ -1,32 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.chauthai.swipereveallayout.SwipeRevealLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.chauthai.swipereveallayout.SwipeRevealLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_layout_item_address"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="64dp"
     android:background="@color/white"
     android:clickable="true"
     android:gravity="center_vertical"
-    android:orientation="vertical"
     app:dragEdge="right"
     app:mode="same_level">
 
-    <FrameLayout
-        android:id="@+id/edit_layout"
-        android:layout_width="60dp"
-        android:layout_height="match_parent"
-        android:background="@color/colorEditItemAddress">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:src="@mipmap/ic_address_item_edit_orange"/>
-    </FrameLayout>
-
     <LinearLayout
+        android:id="@+id/ll_swipe_items_address_book_item"
+        android:layout_width="wrap_content"
+        android:layout_height="64dp"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/export_priv"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@color/buttonCancelBitcoin">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@mipmap/ic_export_priv" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/edit_address"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorEditItemAddress">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@mipmap/ic_address_item_edit_orange" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
         android:id="@+id/rl_item_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,6 +57,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:orientation="vertical">
@@ -47,11 +67,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:ellipsize="end"
                 android:fontFamily="sans-serif-light"
+                android:lines="1"
                 android:textColor="@color/black"
                 android:textSize="@dimen/textSizeMedium"
                 android:textStyle="bold"
-                tools:text="Lable"/>
+                tools:text="Label" />
 
             <TextView
                 android:id="@+id/tv_address_address"
@@ -62,13 +84,13 @@
                 android:lines="1"
                 android:textColor="@color/black"
                 android:textSize="@dimen/textSizeMedium"
-                tools:text="addressssfvsdvdwvsdv2784rgf4bo86b49f7497y0bb7ykj7"/>
+                tools:text="addressssfvsdvdwvsdv2784rgf4bo86b49f7497y0bb7ykj7" />
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/buttonDisabled"/>
-
-    </LinearLayout>
+            android:layout_alignParentBottom="true"
+            android:background="@color/buttonDisabled" />
+    </RelativeLayout>
 </com.chauthai.swipereveallayout.SwipeRevealLayout>

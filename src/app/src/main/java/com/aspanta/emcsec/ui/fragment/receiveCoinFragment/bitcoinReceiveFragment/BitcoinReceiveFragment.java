@@ -15,7 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.BtcAddress;
 import com.aspanta.emcsec.presenter.bitcionReceivePresenter.BitcionReceivePresenter;
 import com.aspanta.emcsec.presenter.bitcionReceivePresenter.IBitcionReceivePresenter;
@@ -27,7 +27,7 @@ import com.aspanta.emcsec.ui.fragment.receiveCoinFragment.adapter.BitcoinAdapter
 
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.BTC_EXCHANGE_RATE_KEY;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
 
 public class BitcoinReceiveFragment extends Fragment implements IBaseFragment, IBitcoinReceiveFragment, AdapterView.OnItemSelectedListener {
@@ -52,14 +52,14 @@ public class BitcoinReceiveFragment extends Fragment implements IBaseFragment, I
         View v = inflater.inflate(R.layout.fragment_bitcoin_receive, container, false);
         init(v);
 
-        String currentCurrency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        String currentCurrency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         if (currentCurrency.equals("RUB")) {
             currentCurrency = "RUR";
         }
 
-        mTvBalanceBtc.setText(SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
-        String wholeRowBalanceBtc = "<b>~" + SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
-                currentCurrency + " (" + "<b>1 </b> BTC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(BTC_COURSE_KEY) + " </b>" +
+        mTvBalanceBtc.setText(SPHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
+        String wholeRowBalanceBtc = "<b>~" + SPHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
+                currentCurrency + " (" + "<b>1 </b> BTC = <b>" + SPHelper.getInstance().getStringValue(BTC_EXCHANGE_RATE_KEY) + " </b>" +
                 currentCurrency + ")";
 
         mTvWholeRowBalanceBtc.setText(Html.fromHtml(wholeRowBalanceBtc));

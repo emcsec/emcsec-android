@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.BtcAddress;
 import com.aspanta.emcsec.db.room.BtcAddressForChange;
 import com.aspanta.emcsec.db.room.EmcAddress;
@@ -27,7 +27,6 @@ import com.aspanta.emcsec.presenter.historyPresenter.HistoryBitcoinPresenter;
 import com.aspanta.emcsec.presenter.historyPresenter.HistoryEmercoinPresenter;
 import com.aspanta.emcsec.ui.activities.seedGenerationAndRestoring.GenerateRestoreSeedActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,14 +41,15 @@ import rx.schedulers.Schedulers;
 
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.BTC_EXCHANGE_RATE_KEY;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.EMC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.EMC_EXCHANGE_RATE_KEY;
+import static com.aspanta.emcsec.tools.Config.METHOD_GET_BALANCE;
 import static com.aspanta.emcsec.tools.Config.SEED;
-import static com.aspanta.emcsec.tools.Config.showAlertDialog;
 import static com.aspanta.emcsec.tools.InternetConnection.internetConnectionChecking;
+import static com.aspanta.emcsec.tools.JsonRpcHelper.createRpcRequest;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.downloadProgressDashboard;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.totalProgressDashboard;
 
@@ -67,7 +67,7 @@ public class SplashActivity extends AppCompatActivity {
     TcpClientEmc mTcpClientEmc;
     TcpClientBtc mTcpClientBtc;
     public int countEmc, countBtc;
-    public int satoshiSumEmc, satoshiSumBtc;
+    public long satoshiSumEmc, satoshiSumBtc;
     ConnectTaskEmc connectTaskEmc;
     ConnectTaskBtc connectTaskBtc;
     String currency;
@@ -88,12 +88,12 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         init();
 
-        mHistoryBitcoinPresenter = new HistoryBitcoinPresenter(this, null, null);
-        mHistoryEmercoinPresenter = new HistoryEmercoinPresenter(this, null, null);
+        mHistoryBitcoinPresenter = new HistoryBitcoinPresenter(SplashActivity.this, null, null);
+        mHistoryEmercoinPresenter = new HistoryEmercoinPresenter(SplashActivity.this, null, null);
 
-        currency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
-        Log.d("SEED: ", SharedPreferencesHelper.getInstance().getStringValue(SEED));
-        String seed = SharedPreferencesHelper.getInstance().getStringValue(SEED);
+        currency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        Log.d("SEED: ", SPHelper.getInstance().getStringValue(SEED));
+        String seed = SPHelper.getInstance().getStringValue(SEED);
 
         if (internetConnectionChecking(this)) {
             if (seed.equals("?") || seed.isEmpty()) {
@@ -115,7 +115,6 @@ public class SplashActivity extends AppCompatActivity {
             if (seed.equals("?") || seed.isEmpty()) {
                 startActivity(new Intent(this, GenerateRestoreSeedActivity.class));
             } else {
-                showErrorDialog();
                 startMainActivity();
             }
         }
@@ -143,26 +142,29 @@ public class SplashActivity extends AppCompatActivity {
         if (response.isSuccessful()) {
             try {
                 Log.d(TAG, "response.isSuccessful() started");
-                JSONArray jsonArray = new JSONArray(response.body().toString());
-                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                JSONObject jsonObject = new JSONObject(response.body().toString());
+                JSONObject data = jsonObject.getJSONObject("data");
+                JSONObject quotes = data.getJSONObject("quotes");
+
+                Log.d(TAG, "responseHandlerCourseBtc: " + quotes.toString());
 
                 switch (currency) {
                     case "USD":
-                        courseEmc = jsonObject.getString("price_usd");
+                        courseEmc = quotes.getJSONObject("USD").getString("price");
                         break;
                     case "EUR":
-                        courseEmc = jsonObject.getString("price_eur");
+                        courseEmc = quotes.getJSONObject("EUR").getString("price");
                         break;
                     case "CNY":
-                        courseEmc = jsonObject.getString("price_cny");
+                        courseEmc = quotes.getJSONObject("CNY").getString("price");
                         break;
                     case "RUB":
-                        courseEmc = jsonObject.getString("price_rub");
+                        courseEmc = quotes.getJSONObject("RUB").getString("price");
                         break;
                 }
 
                 BigDecimal emercoinDecimalCourse = new BigDecimal(courseEmc);
-                SharedPreferencesHelper.getInstance().putStringValue(EMC_COURSE_KEY,
+                SPHelper.getInstance().putStringValue(EMC_EXCHANGE_RATE_KEY,
                         String.valueOf(emercoinDecimalCourse.setScale(2, BigDecimal.ROUND_HALF_UP)));
 
                 return courseEmc;
@@ -178,30 +180,32 @@ public class SplashActivity extends AppCompatActivity {
 
     private String responseHandlerCourseBtc(Response<Object> response) {
 
-        Log.d(TAG, "responseHandlerCourseBtc() started");
         if (response.isSuccessful()) {
             try {
                 Log.d(TAG, "response.isSuccessful() started");
-                JSONArray jsonArray = new JSONArray(response.body().toString());
-                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                JSONObject jsonObject = new JSONObject(response.body().toString());
+                JSONObject data = jsonObject.getJSONObject("data");
+                JSONObject quotes = data.getJSONObject("quotes");
+
+                Log.d(TAG, "responseHandlerCourseBtc: " + quotes.toString());
 
                 switch (currency) {
                     case "USD":
-                        courseBtc = jsonObject.getString("price_usd");
+                        courseBtc = quotes.getJSONObject("USD").getString("price");
                         break;
                     case "EUR":
-                        courseBtc = jsonObject.getString("price_eur");
+                        courseBtc = quotes.getJSONObject("EUR").getString("price");
                         break;
                     case "CNY":
-                        courseBtc = jsonObject.getString("price_cny");
+                        courseBtc = quotes.getJSONObject("CNY").getString("price");
                         break;
                     case "RUB":
-                        courseBtc = jsonObject.getString("price_rub");
+                        courseBtc = quotes.getJSONObject("RUB").getString("price");
                         break;
                 }
 
                 BigDecimal bitcoinDecimalCourse = new BigDecimal(courseBtc);
-                SharedPreferencesHelper.getInstance().putStringValue(BTC_COURSE_KEY,
+                SPHelper.getInstance().putStringValue(BTC_EXCHANGE_RATE_KEY,
                         String.valueOf(bitcoinDecimalCourse.setScale(2, BigDecimal.ROUND_HALF_UP)));
 
                 return courseBtc;
@@ -221,7 +225,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void showErrorDialog() {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(SplashActivity.this)
                 .setTitle(getString(R.string.error))
                 .setMessage(getString(R.string.could_not_connect))
                 .setCancelable(false)
@@ -248,7 +252,7 @@ public class SplashActivity extends AppCompatActivity {
 
                     BigDecimal balanceEmcBigDecimal = new BigDecimal(satoshiSumEmc);
                     balanceEmc = String.valueOf(balanceEmcBigDecimal.divide(new BigDecimal(1000000)));
-                    SharedPreferencesHelper.getInstance().putStringValue(EMC_BALANCE_KEY, balanceEmc);
+                    SPHelper.getInstance().putStringValue(EMC_BALANCE_KEY, balanceEmc);
 
                     Log.d("BALANCE EMC", balanceEmc);
                     countEmc++;
@@ -258,7 +262,7 @@ public class SplashActivity extends AppCompatActivity {
                 if (countBtc == 25) {
                     BigDecimal balanceBtcBigDecimal = new BigDecimal(satoshiSumBtc);
                     balanceBtc = String.valueOf(balanceBtcBigDecimal.divide(new BigDecimal(100000000)));
-                    SharedPreferencesHelper.getInstance().putStringValue(BTC_BALANCE_KEY, balanceBtc);
+                    SPHelper.getInstance().putStringValue(BTC_BALANCE_KEY, balanceBtc);
 
                     Log.d("BALANCE BTC", balanceBtc);
                     countBtc++;
@@ -270,7 +274,7 @@ public class SplashActivity extends AppCompatActivity {
                         mEmcTransactionsListForSplashActivity.clear();
                         mBtcTransactionsListForSplashActivity.clear();
                         if (courseEmc.equals("") || courseBtc.equals("")) {
-                            showAlertDialog(SplashActivity.this, getString(R.string.could_not_connect));
+//                            showErrorDialog();
                             startMainActivity();
                             cancel();
                         }
@@ -281,10 +285,10 @@ public class SplashActivity extends AppCompatActivity {
                             BigDecimal bitcoinRoundBalanceUsd = bitcoinDecimalBalance.multiply(bitcoinDecimalCourse)
                                     .setScale(2, BigDecimal.ROUND_HALF_UP);
 
-                            SharedPreferencesHelper.getInstance().putStringValue(BTC_COURSE_KEY,
+                            SPHelper.getInstance().putStringValue(BTC_EXCHANGE_RATE_KEY,
                                     String.valueOf(bitcoinDecimalCourse.setScale(2, BigDecimal.ROUND_HALF_UP)));
 
-                            SharedPreferencesHelper.getInstance().putStringValue(BTC_BALANCE_IN_USD_KEY,
+                            SPHelper.getInstance().putStringValue(BTC_BALANCE_IN_USD_KEY,
                                     String.valueOf(bitcoinRoundBalanceUsd));
 
                             BigDecimal emercoinDecimalCourse = new BigDecimal(courseEmc);
@@ -292,10 +296,10 @@ public class SplashActivity extends AppCompatActivity {
                             BigDecimal emercoinRoundBalanceUsd = emercoinDecimalBalance.multiply(emercoinDecimalCourse)
                                     .setScale(2, BigDecimal.ROUND_HALF_UP);
 
-                            SharedPreferencesHelper.getInstance().putStringValue(EMC_COURSE_KEY,
+                            SPHelper.getInstance().putStringValue(EMC_EXCHANGE_RATE_KEY,
                                     String.valueOf(emercoinDecimalCourse.setScale(2, BigDecimal.ROUND_HALF_UP)));
 
-                            SharedPreferencesHelper.getInstance().putStringValue(EMC_BALANCE_IN_USD_KEY,
+                            SPHelper.getInstance().putStringValue(EMC_BALANCE_IN_USD_KEY,
                                     String.valueOf(emercoinRoundBalanceUsd));
 
 
@@ -339,17 +343,17 @@ public class SplashActivity extends AppCompatActivity {
                         get20Emc();
                     } else if (jsonObject.getInt("id") == 2) {
 
-                        Log.d("onProgressUpdate() countEmc", String.valueOf(countEmc));
+                        Log.d("countEmc", String.valueOf(countEmc));
 
                         JSONObject balanceResult = new JSONObject(jsonObject.getString("result"));
                         String balanceConfirmed = balanceResult.getString("confirmed");
                         String balanceUnconfirmed = balanceResult.getString("unconfirmed");
 
                         if (balanceUnconfirmed.contains("-")) {
-                            int totalValue = Integer.valueOf(balanceConfirmed) + Integer.valueOf(balanceUnconfirmed);
+                            long totalValue = Long.valueOf(balanceConfirmed) + Long.valueOf(balanceUnconfirmed);
                             satoshiSumEmc += totalValue;
                         } else {
-                            satoshiSumEmc += Integer.valueOf(balanceConfirmed);
+                            satoshiSumEmc += Long.valueOf(balanceConfirmed);
                         }
                         countEmc++;
                     }
@@ -381,7 +385,7 @@ public class SplashActivity extends AppCompatActivity {
                         get20Btc();
                     } else if (jsonObject.getInt("id") == 4) {
 
-                        Log.d("onProgressUpdate() countBtc", String.valueOf(countBtc));
+                        Log.d("countBtc", String.valueOf(countBtc));
 
                         JSONObject balanceResult = new JSONObject(jsonObject.getString("result"));
                         String balanceConfirmed = balanceResult.getString("confirmed");
@@ -429,7 +433,7 @@ public class SplashActivity extends AppCompatActivity {
             if (mTcpClientEmc != null) {
                 downloadProgressDashboard++;
                 Log.d("mTcpClientEmc", emcAddress);
-                String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 2,\"method\":\"blockchain.address.get_balance\",\"params\":[\"" + emcAddress + "\"]}";
+                String jsonRequest = createRpcRequest(2, METHOD_GET_BALANCE, emcAddress);
                 mTcpClientEmc.sendMessage(jsonRequest);
                 Log.d("mTcpClientEmc", jsonRequest);
             }
@@ -452,7 +456,7 @@ public class SplashActivity extends AppCompatActivity {
             if (mTcpClientBtc != null) {
                 downloadProgressDashboard++;
                 Log.d("mTcpClientBtc", btcAddress);
-                String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 4,\"method\":\"blockchain.address.get_balance\",\"params\":[\"" + btcAddress + "\"]}";
+                String jsonRequest = createRpcRequest(4, METHOD_GET_BALANCE, btcAddress);
                 mTcpClientBtc.sendMessage(jsonRequest);
                 Log.d("mTcpClientBtc", jsonRequest);
             }

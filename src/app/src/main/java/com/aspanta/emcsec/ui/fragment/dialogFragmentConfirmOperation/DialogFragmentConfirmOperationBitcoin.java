@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.aspanta.emcsec.R;
 import com.aspanta.emcsec.presenter.enterAnAddressBitcoinPresenter.IEnterAnAddressBitcoinPresenter;
+import com.aspanta.emcsec.tools.InternetConnection;
+import com.aspanta.emcsec.ui.activities.MainActivity;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -70,8 +72,11 @@ public class DialogFragmentConfirmOperationBitcoin extends DialogFragment {
         mTvAsk.setText(getContext().getString(R.string.do_you_want_to_send) + sAmount + " BTC?");
 
         mBtnYes.setOnClickListener(o -> {
-            sPresenter.sendBitcoin(sAddress, sAmount, sFeePerKb);
-//            sPresenter.sendBitcoin(new BitcoinTransactionPojo(sAddress, sAmount, sFeePerKb, ""));
+            if (InternetConnection.internetConnectionChecking(getContext())){
+                sPresenter.sendBitcoin(sAddress, sAmount, sFeePerKb);
+            } else {
+                MainActivity.showAlertDialog(getActivity(), getString(R.string.could_not_connect));
+            }
             dismiss();
 
         });

@@ -60,7 +60,7 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/textSizeMedium"
                 android:textStyle="bold"
-                tools:text="Lable"/>
+                tools:text="Label"/>
 
             <TextView
                 android:id="@+id/tv_address_address"

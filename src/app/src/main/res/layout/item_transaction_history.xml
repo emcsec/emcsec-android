@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/item_text_margin">
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tv_date_item_transaction_history"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -31,7 +31,11 @@
             android:gravity="center_vertical"
             android:textColor="@color/black"
             android:textSize="@dimen/textSizeMedium"
-            tools:text="26.09.2017"/>
+            tools:text="Не подтверждено"
+            app:autoSizeMinTextSize="10sp"
+            app:autoSizeTextType="uniform"
+            android:maxLines="1"
+            android:maxWidth="100dp"/>
 
         <ImageView
             android:id="@+id/iv_pending_transaction_item_transaction_history"

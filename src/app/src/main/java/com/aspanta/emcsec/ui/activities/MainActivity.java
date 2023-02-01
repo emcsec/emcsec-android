@@ -1,6 +1,8 @@
 package com.aspanta.emcsec.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -10,70 +12,74 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.BuildConfig;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.ui.activities.seedGenerationAndRestoring.GenerateRestoreSeedActivity;
 import com.aspanta.emcsec.ui.fragment.IBaseFragment;
 import com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment;
 import com.aspanta.emcsec.ui.fragment.dialogFragmentAreYouSureWantToClose.DialogFragmentAreYouSureWantToClose;
-import com.aspanta.emcsec.ui.fragment.dialogFragmentPin.DialogFragmentEnterPin;
 import com.aspanta.emcsec.ui.fragment.enterAnAddressBitcoinFragment.EnterAnAddressBitcoinFragment;
 import com.aspanta.emcsec.ui.fragment.enterAnAddressEmercoinFragment.EnterAnAddressEmercoinFragment;
 import com.aspanta.emcsec.ui.fragment.fragmentAbout.AboutFragment;
 import com.aspanta.emcsec.ui.fragment.historyFragment.HistoryFragment;
+import com.aspanta.emcsec.ui.fragment.pin.dialogFragmentPin.DialogSetUpFingerprint;
+import com.aspanta.emcsec.ui.fragment.pin.dialogFragmentPin.EnterPin;
+import com.aspanta.emcsec.ui.fragment.pin.dialogFragmentPin.SetUpPin;
 import com.aspanta.emcsec.ui.fragment.receiveCoinFragment.ReceiveCoinFragment;
 import com.aspanta.emcsec.ui.fragment.sendCoinFragment.SendCoinFragment;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.SettingsFragment;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
-import rx.Subscription;
-
 import static com.aspanta.emcsec.R.id.action_get_dashboard;
 import static com.aspanta.emcsec.R.id.action_history_dashboard;
 import static com.aspanta.emcsec.R.id.action_home_dashboard;
 import static com.aspanta.emcsec.R.id.action_send;
-import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_IN_USD_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_COURSE_KEY;
-import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
-import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_IN_USD_KEY;
-import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.EMC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.DISABLE;
 import static com.aspanta.emcsec.tools.Config.EMERCOIN;
+import static com.aspanta.emcsec.tools.Config.ENABLE;
 import static com.aspanta.emcsec.tools.Config.EXTRAS_ADDRESS;
 import static com.aspanta.emcsec.tools.Config.EXTRAS_AMOUNT;
 import static com.aspanta.emcsec.tools.Config.EXTRAS_TYPE;
-import static com.aspanta.emcsec.tools.Config.LAST_FEE_VALUE;
-import static com.aspanta.emcsec.tools.Config.PIN_CODE;
-import static com.aspanta.emcsec.tools.Config.SEED;
-import static com.aspanta.emcsec.tools.Config.SET_PIN_CODE_OR_NOT;
+import static com.aspanta.emcsec.tools.Config.FROM_DASHBOARD;
+import static com.aspanta.emcsec.tools.Config.FROM_SETTINGS;
 import static com.aspanta.emcsec.tools.Config.backFromQrOrSharing;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SetUpPin.SetPinCallback, EnterPin.EnterPinCallback {
 
     private final String TAG = this.getClass().getSimpleName();
     FragmentManager fragmentManager = getSupportFragmentManager();
-    private Subscription subscription;
     private NavigationView navigationView;
     private BottomNavigationViewEx bottomNavigationView;
     private RelativeLayout mRlLogout, mRlDashboard, mRlSendCoins, mRlReceiveCoins, mRlTransactionHistory,
             mRlAbout, mRlSettings;
-    private ProgressBar mPbLogout;
     private TextView mTvVersion;
     DrawerLayout drawer;
     public static boolean isDataDownloaded = false;
     private ActionBarDrawerToggle toggle;
+    private static boolean isActivityFinished;
+    private SPHelper mSPHelper = SPHelper.getInstance();
+
+    public static void showAlertDialog(Context context, String error) {
+
+        if (!isActivityFinished) {
+            new AlertDialog.Builder(context)
+                    .setTitle(context.getString(R.string.error))
+                    .setMessage(error)
+                    .setCancelable(false)
+                    .setPositiveButton(context.getString(R.string.ok), (DialogInterface dialog, int which) -> dialog.dismiss())
+                    .create()
+                    .show();
+        }
+    }
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -84,11 +90,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume started");
-        if (SharedPreferencesHelper.getInstance().getStringValue(SET_PIN_CODE_OR_NOT).equals("yes")) {
-            Log.d(TAG, "backFromQrOrSharing = " + backFromQrOrSharing);
+        isActivityFinished = false;
+        if (SPHelper.getInstance().getEnablePin() == ENABLE) {
             if (!backFromQrOrSharing) {
-                DialogFragmentEnterPin.newInstance().show(getSupportFragmentManager(), "");
+                EnterPin.newInstance(FROM_DASHBOARD).show(getSupportFragmentManager(), "");
             } else {
                 backFromQrOrSharing = false;
             }
@@ -96,21 +101,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause started");
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop started");
+        isActivityFinished = true;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate started");
         setContentView(R.layout.activity_main);
 
         getWindow().getDecorView().setSystemUiVisibility(
@@ -143,13 +141,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        Log.d(TAG, "onActivityResult started");
-
         if (requestCode == 2 && data != null) {
-
             if (resultCode == RESULT_OK) {
-                Fragment fragment = null;
+                Fragment fragment;
                 String address = data.getStringExtra(EXTRAS_ADDRESS);
                 String amount = data.getStringExtra(EXTRAS_AMOUNT);
 
@@ -158,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     fragment = EnterAnAddressBitcoinFragment.newInstance(address, amount, "");
                 }
-
                 navigator(fragment, ((IBaseFragment) fragment).getCurrentTag());
             }
         }
@@ -207,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         drawer = findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
     }
 
@@ -215,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         return toggle;
     }
 
+    @SuppressLint("CheckResult")
     private void setOnClickListeners() {
 
         clicks(mRlDashboard)
@@ -301,7 +295,6 @@ public class MainActivity extends AppCompatActivity {
         mRlReceiveCoins = findViewById(R.id.rl_receive_coins);
         mRlTransactionHistory = findViewById(R.id.rl_transaction_history);
         mRlSettings = findViewById(R.id.rl_settings);
-        mPbLogout = findViewById(R.id.pb_logout);
         navigationView = findViewById(R.id.nav_view);
         mTvVersion = navigationView.getHeaderView(0).findViewById(R.id.tv_version);
 
@@ -344,28 +337,53 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void clearData() {
-
-        SharedPreferencesHelper.getInstance().putStringValue(SEED, "");
-
-        SharedPreferencesHelper.getInstance().putStringValue(EMC_BALANCE_KEY, "?");
-        SharedPreferencesHelper.getInstance().putStringValue(EMC_COURSE_KEY, "?");
-        SharedPreferencesHelper.getInstance().putStringValue(EMC_BALANCE_IN_USD_KEY, "?");
-        SharedPreferencesHelper.getInstance().putStringValue(BTC_BALANCE_KEY, "?");
-        SharedPreferencesHelper.getInstance().putStringValue(BTC_COURSE_KEY, "?");
-        SharedPreferencesHelper.getInstance().putStringValue(BTC_BALANCE_IN_USD_KEY, "?");
-
-        SharedPreferencesHelper.getInstance().putStringValue(CURRENT_CURRENCY, "USD");
-
-        App.getDbInstance().utxoBitcoinAlreadyUsedDao().deleteAll();
-        App.getDbInstance().utxoBitcoinFromChangeDao().deleteAll();
-
-        App.getDbInstance().utxoEmercoinAlreadyUsedDao().deleteAll();
-        App.getDbInstance().utxoEmercoinFromChangeDao().deleteAll();
-
-        SharedPreferencesHelper.getInstance().putStringValue(SET_PIN_CODE_OR_NOT, "?");
-        SharedPreferencesHelper.getInstance().putStringValue(PIN_CODE, "not");
-        SharedPreferencesHelper.getInstance().putStringValue(LAST_FEE_VALUE, "");
-
+        SPHelper.getInstance().clear();
         isDataDownloaded = false;
+    }
+
+    @Override
+    public void onPinEntered(int from) {
+        if (from == FROM_SETTINGS) {
+            SettingsFragment sf = (SettingsFragment) getSupportFragmentManager().findFragmentByTag(SettingsFragment.class.getName());
+            if (mSPHelper.getEnablePin() == ENABLE) {
+                mSPHelper.enablePin(DISABLE);
+                sf.getSwitchFingerprint().setEnabled(false);
+            } else {
+                mSPHelper.enablePin(ENABLE);
+                sf.getSwitchFingerprint().setEnabled(true);
+            }
+        }
+    }
+
+    @Override
+    public void onPinCanceled(int from) {
+        if (from == FROM_SETTINGS) {
+            SettingsFragment sf = (SettingsFragment) getSupportFragmentManager().findFragmentByTag(SettingsFragment.class.getName());
+            sf.getSwitchPinCode().setChecked(!sf.getSwitchPinCode().isChecked());
+        } else if (from == FROM_DASHBOARD) {
+            finishAffinity();
+        }
+    }
+
+    @Override
+    public void onConfirmSetUp(String pin, int from) {
+        mSPHelper.enablePin(ENABLE);
+        mSPHelper.savePin(pin);
+
+        if (from == FROM_DASHBOARD) {
+            DialogSetUpFingerprint.newInstance().show(getSupportFragmentManager(), "");
+        } else if (from == FROM_SETTINGS) {
+            SettingsFragment sf = (SettingsFragment) getSupportFragmentManager().findFragmentByTag(SettingsFragment.class.getName());
+            sf.getSwitchPinCode().setChecked(true);
+            sf.getSwitchFingerprint().setEnabled(true);
+        }
+    }
+
+    @Override
+    public void onCancelSetUp(int from) {
+        if (from == FROM_SETTINGS) {
+            SettingsFragment sf = (SettingsFragment) getSupportFragmentManager().findFragmentByTag(SettingsFragment.class.getName());
+            sf.getSwitchPinCode().setChecked(false);
+        }
     }
 }

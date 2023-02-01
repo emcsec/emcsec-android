@@ -13,10 +13,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.presenter.enterAnAddressEmercoinPresenter.EnterAnAddressEmercoinPresenter;
 import com.aspanta.emcsec.presenter.enterAnAddressEmercoinPresenter.IEnterAnAddressEmercoinPresenter;
-import com.aspanta.emcsec.tools.Config;
 import com.aspanta.emcsec.tools.EmercoinNetwork;
 import com.aspanta.emcsec.ui.activities.MainActivity;
 import com.aspanta.emcsec.ui.fragment.dialogFragmentConfirmOperation.DialogFragmentConfirmOperationEmercoin;
@@ -25,8 +24,8 @@ import com.aspanta.emcsec.ui.fragment.dialogFragmentPleaseWait.DialogFragmentPle
 import com.aspanta.emcsec.ui.fragment.sendCoinFragment.SendCoinFragment;
 import com.aspanta.emcsec.ui.fragment.sendCoinFragment.sendEmercoinFragment.SendEmercoinFragment;
 
-import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.LegacyAddress;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
@@ -35,7 +34,7 @@ import io.reactivex.disposables.Disposable;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.EMC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.EMC_EXCHANGE_RATE_KEY;
 import static com.aspanta.emcsec.tools.Config.REGEX_AMOUNT;
 import static com.aspanta.emcsec.tools.Config.REGEX_EMC_ADDRESS;
 import static com.aspanta.emcsec.tools.Config.REGEX_WHOLE_AMOUNT;
@@ -78,7 +77,7 @@ public class EnterAnAddressEmercoinFragment extends Fragment implements IEnterAn
     public void onResume() {
         super.onResume();
         if (listener != null) {
-            SharedPreferencesHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
+            SPHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
         }
     }
 
@@ -100,26 +99,26 @@ public class EnterAnAddressEmercoinFragment extends Fragment implements IEnterAn
         View v = inflater.inflate(R.layout.fragment_enter_an_address_emercoin, container, false);
         init(v);
 
-        String currentCurrency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        String currentCurrency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         if (currentCurrency.equals("RUB")) {
             currentCurrency = "RUR";
         }
 
-        mTvBalanceEmc.setText(SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
-        String wholeRowBalanceEmc = "<b>~" + SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
-                currentCurrency + " (" + "<b>1 </b> EMC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(EMC_COURSE_KEY) + " </b>" +
+        mTvBalanceEmc.setText(SPHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
+        String wholeRowBalanceEmc = "<b>~" + SPHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
+                currentCurrency + " (" + "<b>1 </b> EMC = <b>" + SPHelper.getInstance().getStringValue(EMC_EXCHANGE_RATE_KEY) + " </b>" +
                 currentCurrency + ")";
 
         mTvWholeRowBalanceEmc.setText(Html.fromHtml(wholeRowBalanceEmc));
 
         String finalCurrentCurrency = currentCurrency;
         listener = (sharedPreferences, key) -> {
-            mTvBalanceEmc.setText(SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
-            mTvWholeRowBalanceEmc.setText(Html.fromHtml("<b>~" + SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
-                    finalCurrentCurrency + " (" + "<b>1 </b> EMC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(EMC_COURSE_KEY) + " </b>" +
+            mTvBalanceEmc.setText(SPHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
+            mTvWholeRowBalanceEmc.setText(Html.fromHtml("<b>~" + SPHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
+                    finalCurrentCurrency + " (" + "<b>1 </b> EMC = <b>" + SPHelper.getInstance().getStringValue(EMC_EXCHANGE_RATE_KEY) + " </b>" +
                     finalCurrentCurrency + ")"));
         };
-        SharedPreferencesHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
+        SPHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
 
         if (mParam1 != null && mParam2 != null) {
             mEtAddressEmc.setText(mParam1);
@@ -127,12 +126,12 @@ public class EnterAnAddressEmercoinFragment extends Fragment implements IEnterAn
         }
         mBtnSend.setOnClickListener(view -> {
             try {
-                Address.fromBase58(EmercoinNetwork.get(), mEtAddressEmc.getText().toString());
+                LegacyAddress.fromBase58(EmercoinNetwork.get(), mEtAddressEmc.getText().toString());
                 DialogFragmentConfirmOperationEmercoin.
                         newInstance(mPresenter, mEtAmountEmc.getText().toString(),
                                 mEtAddressEmc.getText().toString()).show(getFragmentManager(), "");
             } catch (AddressFormatException afe) {
-                Config.showAlertDialog(getContext(), getString(R.string.enter_the_valid_address));
+                MainActivity.showAlertDialog(getContext(), getString(R.string.enter_the_valid_address));
             }
         });
 
@@ -153,7 +152,7 @@ public class EnterAnAddressEmercoinFragment extends Fragment implements IEnterAn
     public void onStop() {
         super.onStop();
         if (listener != null) {
-            SharedPreferencesHelper.getInstance().getSharedPreferencesLink().unregisterOnSharedPreferenceChangeListener(listener);
+            SPHelper.getInstance().getSharedPreferencesLink().unregisterOnSharedPreferenceChangeListener(listener);
         }
     }
 
@@ -263,14 +262,21 @@ public class EnterAnAddressEmercoinFragment extends Fragment implements IEnterAn
     @Override
     public void hidePleaseWaitDialog() {
         if (dialog != null) {
-            dialog.dismiss();
+            dialog.dismissAllowingStateLoss();
         }
     }
 
     @Override
     public void showSuccessDialog() {
-        DialogFragmentOperationDone.newInstance(mPresenter, null)
-                .show(getFragmentManager(), "");
+
+        DialogFragmentOperationDone dialogFragment =
+                DialogFragmentOperationDone
+                        .newInstance(mPresenter, null);
+
+        getFragmentManager()
+                .beginTransaction()
+                .add(dialogFragment, dialogFragment.getCurrentTag())
+                .commitAllowingStateLoss();
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.aspanta.emcsec.model.apiTCP;
 import android.content.Context;
 import android.util.Log;
 
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -43,8 +43,8 @@ public class TcpClientEmc {
     public TcpClientEmc(OnMessageReceived listener, Context context) {
         mContext = context;
         mMessageListener = listener;
-        SERVER_IP = SharedPreferencesHelper.getInstance().getStringValue(SERVER_HOST_EMC);
-        SERVER_PORT = SharedPreferencesHelper.getInstance().getIntValue(SERVER_PORT_EMC);
+        SERVER_IP = SPHelper.getInstance().getStringValue(SERVER_HOST_EMC);
+        SERVER_PORT = SPHelper.getInstance().getIntValue(SERVER_PORT_EMC);
     }
 
     /**

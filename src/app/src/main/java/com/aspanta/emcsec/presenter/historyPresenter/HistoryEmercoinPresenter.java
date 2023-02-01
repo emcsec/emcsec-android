@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.EmcAddress;
 import com.aspanta.emcsec.db.room.EmcAddressForChange;
 import com.aspanta.emcsec.db.room.historyPojos.EmcTransaction;
@@ -15,11 +15,13 @@ import com.aspanta.emcsec.model.supportPojos.HistorySupportPojo;
 import com.aspanta.emcsec.model.supportPojos.Input;
 import com.aspanta.emcsec.tools.EmercoinNetwork;
 import com.aspanta.emcsec.tools.EmercoinTransaction;
+import com.aspanta.emcsec.tools.JsonRpcHelper;
 import com.aspanta.emcsec.ui.activities.SplashActivity;
 import com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment;
 import com.aspanta.emcsec.ui.fragment.historyFragment.emercoinHistoryFragment.IEmercoinHistoryFragment;
 
 import org.bitcoinj.core.Address;
+import org.bitcoinj.core.LegacyAddress;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.Utils;
@@ -36,8 +38,11 @@ import java.util.Set;
 
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.EMC_COURSE_KEY;
-import static com.aspanta.emcsec.tools.Config.showAlertDialog;
+import static com.aspanta.emcsec.tools.Config.EMC_EXCHANGE_RATE_KEY;
+import static com.aspanta.emcsec.tools.Config.METHOD_GET_BALANCE;
+import static com.aspanta.emcsec.tools.Config.METHOD_GET_HISTORY;
+import static com.aspanta.emcsec.tools.Config.METHOD_TRANSACTION_GET;
+import static com.aspanta.emcsec.ui.activities.MainActivity.showAlertDialog;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.downloadProgressDashboard;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.totalProgressDashboard;
 import static org.bitcoinj.core.Utils.HEX;
@@ -78,10 +83,9 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
     //fields for getting balance
     private String balanceEmc;
     private int countEmc;
-    private int satoshiSumEmc;
+    private long satoshiSumEmc;
     private String currency;
     private ConnectTaskEmcGetBalance mConnectTaskEmcGetBalance;
-
 
     public HistoryEmercoinPresenter(Context context, IEmercoinHistoryFragment emercoinHistoryFragment, DashboardFragment dashboardFragment) {
         mEmercoinHistoryFragment = emercoinHistoryFragment;
@@ -148,7 +152,8 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
             connectTaskEmc.doProgress();
 
             String address = listStringAllAddresses.get(positionGetHistory);
-            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 2,\"method\":\"blockchain.address.get_history\",\"params\":[\"" + address + "\"]}";
+            String jsonRequest = JsonRpcHelper.createRpcRequest(2, METHOD_GET_HISTORY, address);
+//            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 2,\"method\":\"blockchain.address.get_history\",\"params\":[\"" + address + "\"]}";
             mTcpClientEmc.sendMessage(jsonRequest);
         }
     }
@@ -165,7 +170,8 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
         connectTaskEmc.doProgress();
 
         String tx_hash = mListSupportPojos.get(mPositionOfSupportPojo).getTx_hash();
-        String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 5,\"method\":\"blockchain.transaction.get\",\"params\":[\"" + tx_hash + "\"]}";
+        String jsonRequest = JsonRpcHelper.createRpcRequest(5, METHOD_TRANSACTION_GET, tx_hash);
+//        String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 5,\"method\":\"blockchain.transaction.get\",\"params\":[\"" + tx_hash + "\"]}";
         mTcpClientEmc.sendMessage(jsonRequest);
     }
 
@@ -190,7 +196,8 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
             connectTaskEmc.doProgress();
 
             String prevTxHash = inputsList.get(inputsPos).getPrev_tx_hash();
-            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 6,\"method\":\"blockchain.transaction.get\",\"params\":[\"" + prevTxHash + "\"]}";
+            String jsonRequest = JsonRpcHelper.createRpcRequest(6, METHOD_TRANSACTION_GET, prevTxHash);
+//            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 6,\"method\":\"blockchain.transaction.get\",\"params\":[\"" + prevTxHash + "\"]}";
             mTcpClientEmc.sendMessage(jsonRequest);
         } else {
             inputsPos = 0;
@@ -272,9 +279,12 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
                             totalOutPutAmount += transactionOutput.getValue().longValue();
                         }
 
+
+                        TransactionInput input = transaction.getInputs().get(0);
                         String transactionType = "";
-                        Address addressFromFirstInput = new Address(EmercoinNetwork.get(),
-                                Utils.sha256hash160(transaction.getInputs().get(0).getScriptSig().getPubKey()));
+
+                        LegacyAddress addressFromFirstInput = LegacyAddress
+                                .fromPubKeyHash(EmercoinNetwork.get(), Utils.sha256hash160(input.getScriptSig().getPubKey()));
 
                         Log.d("addressFromFirstInput", addressFromFirstInput.toString());
 
@@ -289,8 +299,15 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
                                     addressString = address.toString();
                                 } catch (NullPointerException npe) {
                                     npe.printStackTrace();
-                                    address = transactionOutput.getAddressFromP2SH(EmercoinNetwork.get());
-                                    addressString = address.toString();
+                                    try {
+                                        address = transactionOutput.getAddressFromP2SH(EmercoinNetwork.get());
+                                        addressString = address.toString();
+                                    } catch (NullPointerException npe2) {
+                                        npe.printStackTrace();
+                                        addressString = "address for NVS";
+                                        Log.d("address in Outputs", addressString);
+                                        break;
+                                    }
                                 }
 
                                 Log.d("address in Outputs", addressString);
@@ -324,8 +341,16 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
                                     addressString = addressfromOutputs.toString();
                                 } catch (NullPointerException npe) {
                                     npe.printStackTrace();
-                                    addressfromOutputs = transactionOutput.getAddressFromP2SH(EmercoinNetwork.get());
-                                    addressString = addressfromOutputs.toString();
+
+                                    try {
+                                        addressfromOutputs = transactionOutput.getAddressFromP2SH(EmercoinNetwork.get());
+                                        addressString = addressfromOutputs.toString();
+                                    } catch (NullPointerException npe2) {
+                                        npe.printStackTrace();
+                                        addressString = "address for NVS";
+                                        Log.d("address in Outputs", addressString);
+                                        break;
+                                    }
                                 }
                                 if (listStringAddresses.contains(addressString)) {
                                     transactionType = "Self";
@@ -422,7 +447,7 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
                         mEmercoinHistoryFragment.hidePleaseWaitDialog();
                     }
                     if (mDashboardFragment != null) {
-                        Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Emercoin Presenter");
+                        Log.d("DashbFraHidePleaseWait", "Hide History Emercoin Presenter");
                         mDashboardFragment.hidePleaseWaitDialogForEmercoinHistoryPresenter();
                     }
                 }
@@ -446,7 +471,7 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
             }
 
             if (mDashboardFragment != null) {
-                Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Emercoin Presenter");
+                Log.d("DashbFrHidePleaseWait", "Hide History Emercoin Presenter");
                 mDashboardFragment.hidePleaseWaitDialogForEmercoinHistoryPresenter();
             }
             if (mEmercoinHistoryFragment != null) {
@@ -468,8 +493,8 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
 
-            Log.d("SET EMC TRANSACTION SIZE", mEmcTransactionSet.size() + "");
-            Log.d("SET EMC TRANSACTION INFO", mEmcTransactionSet.toString());
+//            Log.d("SET EMC TRANSACTION SIZE", mEmcTransactionSet.size() + "");
+//            Log.d("SET EMC TRANSACTION INFO", mEmcTransactionSet.toString());
 
             if (values[0].contains("error")) {
                 showAlertDialog(mContext, values[1]);
@@ -477,7 +502,7 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
                     mEmercoinHistoryFragment.hidePleaseWaitDialog();
                 }
                 if (mDashboardFragment != null) {
-                    Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Emercoin Presenter");
+//                    Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Emercoin Presenter");
                     mDashboardFragment.hidePleaseWaitDialogForEmercoinHistoryPresenter();
                 }
                 mTcpClientEmc.stopClient();
@@ -532,7 +557,7 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
                     mEmercoinHistoryFragment.hidePleaseWaitDialog();
                 }
                 if (mDashboardFragment != null) {
-                    Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Emercoin Presenter");
+//                    Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Emercoin Presenter");
                     mDashboardFragment.hidePleaseWaitDialogForEmercoinHistoryPresenter();
                 }
                 this.cancel(true);
@@ -599,10 +624,10 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
                         Log.d("balanceUnconfirmed", balanceUnconfirmed);
 
                         if (balanceUnconfirmed.contains("-") | listStringAddressesForChange.contains(listStringAllAddresses.get(countEmc))) {
-                            int totalValue = Integer.valueOf(balanceConfirmed) + Integer.valueOf(balanceUnconfirmed);
+                            long totalValue = Long.valueOf(balanceConfirmed) + Long.valueOf(balanceUnconfirmed);
                             satoshiSumEmc += totalValue;
                         } else {
-                            satoshiSumEmc += Integer.valueOf(balanceConfirmed);
+                            satoshiSumEmc += Long.valueOf(balanceConfirmed);
                         }
 
                         countEmc++;
@@ -639,14 +664,16 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
 
             BigDecimal balanceEmcBigDecimal = new BigDecimal(satoshiSumEmc).divide(new BigDecimal(1000000));
             balanceEmc = String.valueOf(balanceEmcBigDecimal);
-            SharedPreferencesHelper.getInstance().putStringValue(EMC_BALANCE_KEY, balanceEmc);
+            SPHelper.getInstance().putStringValue(EMC_BALANCE_KEY, balanceEmc);
 
-            String courseEmc = SharedPreferencesHelper.getInstance().getStringValue(EMC_COURSE_KEY);
-            BigDecimal courseBigDecimal = new BigDecimal(courseEmc);
+            String courseEmc = SPHelper.getInstance().getStringValue(EMC_EXCHANGE_RATE_KEY);
 
-            BigDecimal balanceEmcInUsdBigDecimal = courseBigDecimal.multiply(balanceEmcBigDecimal);
-            SharedPreferencesHelper.getInstance().putStringValue(EMC_BALANCE_IN_USD_KEY,
-                    String.valueOf(balanceEmcInUsdBigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP)));
+            if (courseEmc != null && !courseEmc.equals("?") && !courseEmc.isEmpty()) {
+                BigDecimal courseBigDecimal = new BigDecimal(courseEmc);
+                BigDecimal balanceEmcInUsdBigDecimal = courseBigDecimal.multiply(balanceEmcBigDecimal);
+                SPHelper.getInstance().putStringValue(EMC_BALANCE_IN_USD_KEY,
+                        String.valueOf(balanceEmcInUsdBigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP)));
+            }
 
             mTcpClientEmcGetBalance.stopClient();
         }
@@ -657,7 +684,8 @@ public class HistoryEmercoinPresenter implements IHistoryPresenter {
         String emcAddress = listStringAllAddresses.get(countEmc);
         if (mTcpClientEmcGetBalance != null) {
             downloadProgress++;
-            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 2,\"method\":\"blockchain.address.get_balance\",\"params\":[\"" + emcAddress + "\"]}";
+            String jsonRequest = JsonRpcHelper.createRpcRequest(2, METHOD_GET_BALANCE, emcAddress);
+//            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 2,\"method\":\"blockchain.address.get_balance\",\"params\":[\"" + emcAddress + "\"]}";
             mTcpClientEmcGetBalance.sendMessage(jsonRequest);
         }
     }

@@ -2,7 +2,7 @@ package com.aspanta.emcsec.model.apiTCP;
 
 import android.util.Log;
 
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -40,8 +40,8 @@ public class TcpClientBtc {
      */
     public TcpClientBtc(OnMessageReceived listener) {
         mMessageListener = listener;
-        SERVER_IP = SharedPreferencesHelper.getInstance().getStringValue(SERVER_HOST_BTC);
-        SERVER_PORT = SharedPreferencesHelper.getInstance().getIntValue(SERVER_PORT_BTC);
+        SERVER_IP = SPHelper.getInstance().getStringValue(SERVER_HOST_BTC);
+        SERVER_PORT = SPHelper.getInstance().getIntValue(SERVER_PORT_BTC);
     }
 
     /**

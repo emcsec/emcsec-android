@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.BtcAddress;
 import com.aspanta.emcsec.db.room.BtcAddressForChange;
 import com.aspanta.emcsec.db.room.EmcAddress;
@@ -16,10 +16,9 @@ import com.aspanta.emcsec.model.IModel;
 import com.aspanta.emcsec.model.ModelImpl;
 import com.aspanta.emcsec.model.apiTCP.TcpClientBtc;
 import com.aspanta.emcsec.model.apiTCP.TcpClientEmc;
-import com.aspanta.emcsec.tools.Config;
+import com.aspanta.emcsec.ui.activities.MainActivity;
 import com.aspanta.emcsec.ui.fragment.dashboardFragment.IDashboardFragment;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,12 +33,12 @@ import rx.schedulers.Schedulers;
 
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.BTC_EXCHANGE_RATE_KEY;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.EMC_COURSE_KEY;
-import static com.aspanta.emcsec.tools.Config.showAlertDialog;
+import static com.aspanta.emcsec.tools.Config.EMC_EXCHANGE_RATE_KEY;
+import static com.aspanta.emcsec.ui.activities.MainActivity.showAlertDialog;
 import static com.aspanta.emcsec.tools.InternetConnection.internetConnectionChecking;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.downloadProgressDashboard;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.totalProgressDashboard;
@@ -59,7 +58,7 @@ public class DashboardPresenter implements IDashboardPresenter {
     private TcpClientEmc mTcpClientEmc;
     private TcpClientBtc mTcpClientBtc;
     private int countEmc, countBtc;
-    private int satoshiSumEmc, satoshiSumBtc;
+    private long satoshiSumEmc, satoshiSumBtc;
     private ConnectTaskEmc mConnectTaskEmc;
     private ConnectTaskBtc mConnectTaskBtc;
 
@@ -95,7 +94,7 @@ public class DashboardPresenter implements IDashboardPresenter {
     @Override
     public void getBalance() {
 
-        currency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        currency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         Log.d("CURRENT_CURRENCY", currency);
 
         courseEmc = null;
@@ -113,7 +112,7 @@ public class DashboardPresenter implements IDashboardPresenter {
         mIDashboardFragment.showPleaseWaitDialog();
 
         if (internetConnectionChecking(mContext)) {
-            Log.d("internetConnectionChecking", "true");
+            Log.d("internet", "true");
             courseAndBalanceListener();
             mConnectTaskEmc = new ConnectTaskEmc();
             mConnectTaskEmc.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "");
@@ -122,7 +121,7 @@ public class DashboardPresenter implements IDashboardPresenter {
             getCourseEmc();
             getCourseBtc();
         } else {
-            Log.d("internetConnectionChecking", "false");
+            Log.d("internet", "false");
             mIDashboardFragment.hidePleaseWaitDialog();
             showAlertDialog(mContext, mContext.getString(R.string.could_not_connect));
         }
@@ -148,28 +147,32 @@ public class DashboardPresenter implements IDashboardPresenter {
         if (response.isSuccessful()) {
             try {
                 Log.d(TAG, "response.isSuccessful() started");
-                JSONArray jsonArray = new JSONArray(response.body().toString());
-                JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                JSONObject jsonObject = new JSONObject(response.body().toString());
+                JSONObject data = jsonObject.getJSONObject("data");
+                JSONObject quotes = data.getJSONObject("quotes");
+
+                Log.d(TAG, "responseHandlerCourseBtc: " + quotes.toString());
 
                 switch (currency) {
                     case "USD":
-                        courseEmc = jsonObject.getString("price_usd");
+                        courseEmc = quotes.getJSONObject("USD").getString("price");
                         break;
                     case "EUR":
-                        courseEmc = jsonObject.getString("price_eur");
+                        courseEmc = quotes.getJSONObject("EUR").getString("price");
                         break;
                     case "CNY":
-                        courseEmc = jsonObject.getString("price_cny");
+                        courseEmc = quotes.getJSONObject("CNY").getString("price");
                         break;
                     case "RUB":
-                        courseEmc = jsonObject.getString("price_rub");
+                        courseEmc = quotes.getJSONObject("RUB").getString("price");
                         break;
                 }
 
 //                courseEmc = jsonObject.getString("price_usd");
 
                 BigDecimal emercoinDecimalCourse = new BigDecimal(courseEmc);
-                SharedPreferencesHelper.getInstance().putStringValue(EMC_COURSE_KEY,
+                SPHelper.getInstance().putStringValue(EMC_EXCHANGE_RATE_KEY,
                         String.valueOf(emercoinDecimalCourse.setScale(2, BigDecimal.ROUND_HALF_UP)));
 
                 return courseEmc;
@@ -189,27 +192,30 @@ public class DashboardPresenter implements IDashboardPresenter {
         if (response.isSuccessful()) {
             try {
                 Log.d(TAG, "response.isSuccessful() started");
-                JSONArray jsonArray = new JSONArray(response.body().toString());
-                JSONObject jsonObject = jsonArray.getJSONObject(0);
-//                courseBtc = jsonObject.getString("price_usd");
+
+                JSONObject jsonObject = new JSONObject(response.body().toString());
+                JSONObject data = jsonObject.getJSONObject("data");
+                JSONObject quotes = data.getJSONObject("quotes");
+
+                Log.d(TAG, "responseHandlerCourseBtc: " + quotes.toString());
 
                 switch (currency) {
                     case "USD":
-                        courseBtc = jsonObject.getString("price_usd");
+                        courseBtc = quotes.getJSONObject("USD").getString("price");
                         break;
                     case "EUR":
-                        courseBtc = jsonObject.getString("price_eur");
+                        courseBtc = quotes.getJSONObject("EUR").getString("price");
                         break;
                     case "CNY":
-                        courseBtc = jsonObject.getString("price_cny");
+                        courseBtc = quotes.getJSONObject("CNY").getString("price");
                         break;
                     case "RUB":
-                        courseBtc = jsonObject.getString("price_rub");
+                        courseBtc = quotes.getJSONObject("RUB").getString("price");
                         break;
                 }
 
                 BigDecimal bitcoinDecimalCourse = new BigDecimal(courseBtc);
-                SharedPreferencesHelper.getInstance().putStringValue(BTC_COURSE_KEY,
+                SPHelper.getInstance().putStringValue(BTC_EXCHANGE_RATE_KEY,
                         String.valueOf(bitcoinDecimalCourse.setScale(2, BigDecimal.ROUND_HALF_UP)));
 
                 return courseBtc;
@@ -239,7 +245,7 @@ public class DashboardPresenter implements IDashboardPresenter {
 
                     BigDecimal balanceEmcBigDecimal = new BigDecimal(satoshiSumEmc);
                     balanceEmc = String.valueOf(balanceEmcBigDecimal.divide(new BigDecimal(1000000)));
-                    SharedPreferencesHelper.getInstance().putStringValue(EMC_BALANCE_KEY, balanceEmc);
+                    SPHelper.getInstance().putStringValue(EMC_BALANCE_KEY, balanceEmc);
 
                     Log.d("BALANCE EMC", balanceEmc);
                     countEmc++;
@@ -249,7 +255,7 @@ public class DashboardPresenter implements IDashboardPresenter {
                 if (countBtc == 25) {
                     BigDecimal balanceBtcBigDecimal = new BigDecimal(satoshiSumBtc);
                     balanceBtc = String.valueOf(balanceBtcBigDecimal.divide(new BigDecimal(100000000)));
-                    SharedPreferencesHelper.getInstance().putStringValue(BTC_BALANCE_KEY, balanceBtc);
+                    SPHelper.getInstance().putStringValue(BTC_BALANCE_KEY, balanceBtc);
 
                     Log.d("BALANCE BTC", balanceBtc);
 
@@ -269,9 +275,9 @@ public class DashboardPresenter implements IDashboardPresenter {
                         BigDecimal bitcoinRoundBalanceUsd = bitcoinDecimalBalance.multiply(bitcoinDecimalCourse)
                                 .setScale(2, BigDecimal.ROUND_HALF_UP);
 
-                        SharedPreferencesHelper.getInstance().putStringValue(BTC_COURSE_KEY,
+                        SPHelper.getInstance().putStringValue(BTC_EXCHANGE_RATE_KEY,
                                 String.valueOf(bitcoinDecimalCourse.setScale(2, BigDecimal.ROUND_HALF_UP)));
-                        SharedPreferencesHelper.getInstance().putStringValue(BTC_BALANCE_IN_USD_KEY,
+                        SPHelper.getInstance().putStringValue(BTC_BALANCE_IN_USD_KEY,
                                 String.valueOf(bitcoinRoundBalanceUsd));
 
                         BigDecimal emercoinDecimalCourse = new BigDecimal(courseEmc);
@@ -279,9 +285,9 @@ public class DashboardPresenter implements IDashboardPresenter {
                         BigDecimal emercoinRoundBalanceUsd = emercoinDecimalBalance.multiply(emercoinDecimalCourse)
                                 .setScale(2, BigDecimal.ROUND_HALF_UP);
 
-                        SharedPreferencesHelper.getInstance().putStringValue(EMC_COURSE_KEY,
+                        SPHelper.getInstance().putStringValue(EMC_EXCHANGE_RATE_KEY,
                                 String.valueOf(emercoinDecimalCourse.setScale(2, BigDecimal.ROUND_HALF_UP)));
-                        SharedPreferencesHelper.getInstance().putStringValue(EMC_BALANCE_IN_USD_KEY,
+                        SPHelper.getInstance().putStringValue(EMC_BALANCE_IN_USD_KEY,
                                 String.valueOf(emercoinRoundBalanceUsd));
 
                     } catch (Exception e) {
@@ -325,10 +331,10 @@ public class DashboardPresenter implements IDashboardPresenter {
                         Log.d("balanceUnconfirmed", balanceUnconfirmed);
 
                         if (balanceUnconfirmed.contains("-") | mListEmcAddressesForChange.contains(mListEmcAddresses.get(countEmc))) {
-                            int totalValue = Integer.valueOf(balanceConfirmed) + Integer.valueOf(balanceUnconfirmed);
+                            long totalValue = Long.valueOf(balanceConfirmed) + Long.valueOf(balanceUnconfirmed);
                             satoshiSumEmc += totalValue;
                         } else {
-                            satoshiSumEmc += Integer.valueOf(balanceConfirmed);
+                            satoshiSumEmc += Long.valueOf(balanceConfirmed);
                         }
                         countEmc++;
                         if (countEmc < 25) {
@@ -366,7 +372,7 @@ public class DashboardPresenter implements IDashboardPresenter {
             Log.d("onPostExecute", "onPostExecute started");
             if (!mTcpClientEmc.error.isEmpty()) {
                 Log.d("error for dialog", mTcpClientEmc.error);
-                Config.showAlertDialog(mContext, mContext.getString(R.string.could_not_connect_for) + "Emercoin");
+                MainActivity.showAlertDialog(mContext, mContext.getString(R.string.could_not_connect_for) + "Emercoin");
             }
         }
     }
@@ -431,7 +437,7 @@ public class DashboardPresenter implements IDashboardPresenter {
             Log.d("onPostExecute", "onPostExecute started");
             if (!mTcpClientBtc.error.isEmpty()) {
                 Log.d("error for dialog", mTcpClientBtc.error);
-                Config.showAlertDialog(mContext, mContext.getString(R.string.could_not_connect_for) + "Bitcoin");
+                MainActivity.showAlertDialog(mContext, mContext.getString(R.string.could_not_connect_for) + "Bitcoin");
             }
         }
     }

@@ -14,7 +14,7 @@ import android.widget.Button;
 
 import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.BtcAddressForChange;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.SettingsChangeAddressesFragment;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.dialogFragmentAddressesForTheChange.adapter.AddressesForChangeAdapterBtc;
@@ -30,7 +30,7 @@ public class DialogFragmentAddressesForTheChangeBtc extends DialogFragment {
     private List<BtcAddressForChange> mListBtcAddresses;
     private static String sCurrentAddress;
     private AddressesForChangeAdapterBtc mAddressesForChangeAdapterBtc;
-    public static String addressForChangeBtc = SharedPreferencesHelper.getInstance().getStringValue(CHANGE_ADDRESS_BTC);
+    public static String addressForChangeBtc = SPHelper.getInstance().getStringValue(CHANGE_ADDRESS_BTC);
 
     static SettingsChangeAddressesFragment sSettingsChangeAddressesFragment;
 
@@ -64,7 +64,7 @@ public class DialogFragmentAddressesForTheChangeBtc extends DialogFragment {
         setBtcAddressesList(mListBtcAddresses);
 
         mBtnSave.setOnClickListener(o -> {
-            SharedPreferencesHelper.getInstance().putStringValue(CHANGE_ADDRESS_BTC, addressForChangeBtc);
+            SPHelper.getInstance().putStringValue(CHANGE_ADDRESS_BTC, addressForChangeBtc);
             sSettingsChangeAddressesFragment.setAddressForChangeBtc();
             dismiss();
         });

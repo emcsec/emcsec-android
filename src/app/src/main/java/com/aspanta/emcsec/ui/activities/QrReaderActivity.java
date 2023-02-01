@@ -51,8 +51,6 @@ public class QrReaderActivity extends AppCompatActivity implements ZXingScannerV
         ActivityCompat.requestPermissions(this, new String[]{CAMERA}, REQUEST_CAMERA);
     }
 
-
-
     @Override
     public void onResume() {
         super.onResume();

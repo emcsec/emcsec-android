@@ -1,11 +1,5 @@
 package com.aspanta.emcsec.tools;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
-
-import com.aspanta.emcsec.R;
-
 public class Config {
 
     public static final String BASE_URL_COIN_MARKET = "https://api.coinmarketcap.com/";
@@ -14,8 +8,8 @@ public class Config {
     public static final String TOKEN = "TOKEN";
     public static final String SEED = "SEED";
     public static final String COPY_MESSAGE = "Copied to clipboard";
-    public static final String BTN_COURSE_PATH = "/v1/ticker/bitcoin/";
-    public static final String EMC_COURSE_PATH = "/v1/ticker/emercoin/";
+    public static final String BTN_COURSE_PATH = "/v2/ticker/1/";
+    public static final String EMC_COURSE_PATH = "/v2/ticker/558/";
     public static final String ERROR_MESSAGE = "Could not connect to the server";
 
     public static final String SEEKBAR_VALUE_KEY = "seekbar_value_key";
@@ -32,10 +26,10 @@ public class Config {
 
     public static final String EMC_BALANCE_KEY = "emc_balance";
     public static final String EMC_BALANCE_IN_USD_KEY = "emc_balance_in_usd";
-    public static final String EMC_COURSE_KEY = "emc_course";
+    public static final String EMC_EXCHANGE_RATE_KEY = "emc_course";
     public static final String BTC_BALANCE_KEY = "btc_balance";
     public static final String BTC_BALANCE_IN_USD_KEY = "btc_balance_in_usd";
-    public static final String BTC_COURSE_KEY = "btc_course";
+    public static final String BTC_EXCHANGE_RATE_KEY = "btc_course";
     public static final String REGEX_AMOUNT = "^[0-9]*[.,][0-9]+(?:[eE][-+]?[0-9]+)?$";
     public static final String REGEX_WHOLE_AMOUNT = "^(?!0+$)[\\d]{0,9}$";
     public static final String ARG_PARAM_VIEW_PAGER_PAGE = "paramPage";
@@ -50,26 +44,26 @@ public class Config {
     public static final String SWITCH_SSL_EMC = "switch_ssl_emc";
     public static final String SWITCH_SSL_BTC = "switch_ssl_btc";
 
-    public static final String SWITCH_PIN_CODE = "SWITCH_PIN_CODE";
-
-    public static final String PIN_CODE = "PIN_CODE";
+    //TODO will be removed
+//    public static final String PIN_CODE = "PIN_CODE";
     public static final String SET_PIN_CODE_OR_NOT = "SET_PIN_CODE_OR_NOT";
+
+    //pin
+    public static final String PIN_CODE = "PIN_CODE";
+    public static final String ENABLE_PIN = "ENABLE_PIN";
+    public static final int ENABLE = 0;
+    public static final int DISABLE = 1;
+    public static final String ENABLE_FINGERPRINT = "ENABLE_FINGERPRINT";
+    public static final String ALREADY_SHOWN = "ALREADY_SHOWN";
+    public static final String FROM = "FROM";
+    public static final int FROM_DASHBOARD = 0;
+    public static final int FROM_SETTINGS = 1;
 
     public static boolean backFromQrOrSharing = false;
 
     public static final String CURRENT_CURRENCY = "CURRENT_CURRENCY";
 
     public static final String LAST_FEE_VALUE = "LAST_FEE_VALUE";
-
-    public static void showAlertDialog(Context context, String error) {
-        new AlertDialog.Builder(context)
-                .setTitle(context.getString(R.string.error))
-                .setMessage(error)
-                .setCancelable(false)
-                .setPositiveButton(context.getString(R.string.ok), (DialogInterface dialog, int which) -> dialog.dismiss())
-                .create()
-                .show();
-    }
 
     public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
@@ -80,4 +74,12 @@ public class Config {
         }
         return data;
     }
+
+    //rpc constants
+    public static final String METHOD_LISTUNSPENT = "blockchain.address.listunspent";
+    public static final String METHOD_TX_BROADCAST = "blockchain.transaction.broadcast";
+    public static final String METHOD_GET_BALANCE = "blockchain.address.get_balance";
+    public static final String METHOD_GET_HISTORY = "blockchain.address.get_history";
+    public static final String METHOD_TRANSACTION_GET = "blockchain.transaction.get";
+    public static final String METHOD_GET_HEADER = "blockchain.block.get_header";
 }

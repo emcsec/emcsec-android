@@ -8,6 +8,7 @@
               android:orientation="vertical"
               tools:context="ui.fragment.dashboardFragment.DashboardFragment">
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/header_height"
@@ -258,5 +259,6 @@
             </LinearLayout>
         </ScrollView>
     </com.reginald.swiperefresh.CustomSwipeRefreshLayout>
+
 </LinearLayout>
 

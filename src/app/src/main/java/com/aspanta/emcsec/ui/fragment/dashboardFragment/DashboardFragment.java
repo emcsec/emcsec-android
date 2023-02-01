@@ -19,7 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.presenter.dashboardPresenter.DashboardPresenter;
 import com.aspanta.emcsec.presenter.dashboardPresenter.IDashboardPresenter;
 import com.aspanta.emcsec.presenter.historyPresenter.HistoryBitcoinPresenter;
@@ -27,18 +27,17 @@ import com.aspanta.emcsec.presenter.historyPresenter.HistoryEmercoinPresenter;
 import com.aspanta.emcsec.ui.activities.MainActivity;
 import com.aspanta.emcsec.ui.fragment.bitcoinOperationsFragment.BitcoinOperationsFragment;
 import com.aspanta.emcsec.ui.fragment.dialogFragmentPleaseWait.DialogFragmentPleaseWaitWithProgress;
-import com.aspanta.emcsec.ui.fragment.dialogFragmentSetUpPin.DialogFragmentSetUpPin;
 import com.aspanta.emcsec.ui.fragment.emercoinOperationsFragment.EmercoinOperationsFragment;
+import com.aspanta.emcsec.ui.fragment.pin.dialogFragmentPin.DialogSetUpPin;
 import com.reginald.swiperefresh.CustomSwipeRefreshLayout;
 
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.BTC_EXCHANGE_RATE_KEY;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.EMC_COURSE_KEY;
-import static com.aspanta.emcsec.tools.Config.SET_PIN_CODE_OR_NOT;
+import static com.aspanta.emcsec.tools.Config.EMC_EXCHANGE_RATE_KEY;
 import static com.aspanta.emcsec.ui.activities.MainActivity.isDataDownloaded;
 
 
@@ -63,11 +62,11 @@ public class DashboardFragment extends Fragment implements IDashboardFragment {
     private DialogFragmentPleaseWaitWithProgress dialogEmcHistory;
     private HistoryBitcoinPresenter mHistoryBitcoinPresenter;
     private HistoryEmercoinPresenter mHistoryEmercoinPresenter;
-    private String enterPinOrNot;
     private static String mFrom;
     public static int downloadProgressDashboard = 0;
     public static int totalProgressDashboard = 0;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
+    SPHelper mSPHelper = SPHelper.getInstance();
 
     public static DashboardFragment newInstance(String from) {
         mFrom = from;
@@ -78,7 +77,7 @@ public class DashboardFragment extends Fragment implements IDashboardFragment {
     public void onResume() {
         super.onResume();
         if (listener != null) {
-            SharedPreferencesHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
+            SPHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
         }
     }
 
@@ -88,8 +87,8 @@ public class DashboardFragment extends Fragment implements IDashboardFragment {
         if (mDashboardPresenter == null) {
             mDashboardPresenter = new DashboardPresenter(getContext(), this);
         }
-        mHistoryBitcoinPresenter = new HistoryBitcoinPresenter(getContext(), null, this);
-        mHistoryEmercoinPresenter = new HistoryEmercoinPresenter(getContext(), null, this);
+        mHistoryBitcoinPresenter = new HistoryBitcoinPresenter(getActivity(), null, this);
+        mHistoryEmercoinPresenter = new HistoryEmercoinPresenter(getActivity(), null, this);
     }
 
     @Override
@@ -99,46 +98,47 @@ public class DashboardFragment extends Fragment implements IDashboardFragment {
         View v = inflater.inflate(R.layout.fragment_dashboard, container, false);
         init(v);
 
-        enterPinOrNot = SharedPreferencesHelper.getInstance().getStringValue(SET_PIN_CODE_OR_NOT);
-        if (enterPinOrNot.equals("?")) {
-            DialogFragmentSetUpPin.newInstance().show(getFragmentManager(), "");
+        if (!mSPHelper.isAlreadyShown()) {
+            Log.d(TAG, "!mSPHelper.isAlreadyShown(): ");
+            DialogSetUpPin.newInstance().show(getFragmentManager(), "");
+            mSPHelper.setAlreadyShown(true);
         }
 
-        String currentCurrency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        String currentCurrency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         if (currentCurrency.equals("RUB")) {
             currentCurrency = "RUR";
         }
 
-        mTvBalanceEmercoin.setText(SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
-        mTvBalanceBitcoin.setText(SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
+        mTvBalanceEmercoin.setText(SPHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
+        mTvBalanceBitcoin.setText(SPHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
 
-        String wholeRowBalanceEmc = "<b>~" + SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
-                currentCurrency + " (" + "<b>1 </b> EMC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(EMC_COURSE_KEY) + " </b>" +
+        String wholeRowBalanceEmc = "<b>~" + SPHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
+                currentCurrency + " (" + "<b>1 </b> EMC = <b>" + SPHelper.getInstance().getStringValue(EMC_EXCHANGE_RATE_KEY) + " </b>" +
                 currentCurrency + ")";
 
         mTvWholeRowBalanceEmc.setText(Html.fromHtml(wholeRowBalanceEmc));
 
-        String wholeRowBalanceBtc = "<b>~" + SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
-                currentCurrency + " (" + "<b>1 </b> BTC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(BTC_COURSE_KEY) + " </b>" +
+        String wholeRowBalanceBtc = "<b>~" + SPHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
+                currentCurrency + " (" + "<b>1 </b> BTC = <b>" + SPHelper.getInstance().getStringValue(BTC_EXCHANGE_RATE_KEY) + " </b>" +
                 currentCurrency + ")";
 
         mTvWholeRowBalanceBtc.setText(Html.fromHtml(wholeRowBalanceBtc));
 
         String finalCurrentCurrency = currentCurrency;
         listener = (sharedPreferences, key) -> {
-            mTvWholeRowBalanceEmc.setText(Html.fromHtml("<b>~" + SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
-                    finalCurrentCurrency + " (" + "<b>1 </b> EMC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(EMC_COURSE_KEY) + " </b>" +
+            mTvWholeRowBalanceEmc.setText(Html.fromHtml("<b>~" + SPHelper.getInstance().getStringValue(EMC_BALANCE_IN_USD_KEY) + " </b>" +
+                    finalCurrentCurrency + " (" + "<b>1 </b> EMC = <b>" + SPHelper.getInstance().getStringValue(EMC_EXCHANGE_RATE_KEY) + " </b>" +
                     finalCurrentCurrency + ")"));
 
-            mTvWholeRowBalanceBtc.setText(Html.fromHtml("<b>~" + SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
-                    finalCurrentCurrency + " (" + "<b>1 </b> BTC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(BTC_COURSE_KEY) + " </b>" +
+            mTvWholeRowBalanceBtc.setText(Html.fromHtml("<b>~" + SPHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
+                    finalCurrentCurrency + " (" + "<b>1 </b> BTC = <b>" + SPHelper.getInstance().getStringValue(BTC_EXCHANGE_RATE_KEY) + " </b>" +
                     finalCurrentCurrency + ")"));
 
-            mTvBalanceEmercoin.setText(SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
-            mTvBalanceBitcoin.setText(SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
+            mTvBalanceEmercoin.setText(SPHelper.getInstance().getStringValue(EMC_BALANCE_KEY) + " EMC");
+            mTvBalanceBitcoin.setText(SPHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
 
         };
-        SharedPreferencesHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
+        SPHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
 
         if (!isDataDownloaded) {
             if (mFrom.equals("seed")) {
@@ -341,7 +341,7 @@ public class DashboardFragment extends Fragment implements IDashboardFragment {
     public void onStop() {
         super.onStop();
         if (listener != null) {
-            SharedPreferencesHelper.getInstance().getSharedPreferencesLink().unregisterOnSharedPreferenceChangeListener(listener);
+            SPHelper.getInstance().getSharedPreferencesLink().unregisterOnSharedPreferenceChangeListener(listener);
         }
     }
 }

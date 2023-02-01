@@ -57,10 +57,6 @@ public class ReceiveCoinFragment extends Fragment implements IReceiveCoinFragmen
 
     @Override
     public void onBackPressed() {
-
-
-
-
     }
 
     @Override

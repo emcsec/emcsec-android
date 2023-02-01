@@ -2,6 +2,7 @@ package com.aspanta.emcsec.tools;
 
 import com.google.common.base.Stopwatch;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Utils;
 import org.bitcoinj.crypto.MnemonicCode;
@@ -22,16 +23,18 @@ import java.util.List;
 
 import static org.bitcoinj.core.Utils.HEX;
 
-public class MnemonicCodeCustom extends MnemonicCode {
+public class MnemonicCodeCustom {
 
-    private static final Logger log = LoggerFactory.getLogger(MnemonicCode.class);
+    private static final Logger log = LoggerFactory.getLogger(MnemonicCodeCustom.class);
 
     private ArrayList<String> wordList;
 
-    private static final String BIP39_ENGLISH_RESOURCE_NAME = "mnemonic/wordlist/english.txt";
+    private static final String BIP39_ENGLISH_RESOURCE_NAME = "res/raw/english.txt";
     private static final String BIP39_ENGLISH_SHA256 = "ad90bf3beb7b0eb7e5acd74727dc0da96e0a280a258354e7293fb7e211ac03db";
 
-    /** UNIX time for when the BIP39 standard was finalised. This can be used as a default seed birthday. */
+    /**
+     * UNIX time for when the BIP39 standard was finalised. This can be used as a default seed birthday.
+     */
     public static long BIP39_STANDARDISATION_TIME_SECS = 1381276800;
 
     private static final int PBKDF2_ROUNDS = 2048;
@@ -50,13 +53,15 @@ public class MnemonicCodeCustom extends MnemonicCode {
         }
     }
 
-    /** Initialise from the included word list. Won't work on Android. */
+    /**
+     * Initialise from the included word list. Won't work on Android.
+     */
     public MnemonicCodeCustom() throws IOException {
         this(openDefaultWords(), BIP39_ENGLISH_SHA256);
     }
 
     private static InputStream openDefaultWords() throws IOException {
-        InputStream stream = MnemonicCode.class.getResourceAsStream(BIP39_ENGLISH_RESOURCE_NAME);
+        InputStream stream = MnemonicCodeCustom.class.getClassLoader().getResourceAsStream(BIP39_ENGLISH_RESOURCE_NAME);
         if (stream == null)
             throw new FileNotFoundException(BIP39_ENGLISH_RESOURCE_NAME);
         return stream;
@@ -67,6 +72,7 @@ public class MnemonicCodeCustom extends MnemonicCode {
      * is supplied the digest of the words will be checked.
      */
     public MnemonicCodeCustom(InputStream wordstream, String wordListDigest) throws IOException, IllegalArgumentException {
+
         BufferedReader br = new BufferedReader(new InputStreamReader(wordstream, "UTF-8"));
         this.wordList = new ArrayList<String>(2048);
         MessageDigest md = Sha256Hash.newDigest();
@@ -108,7 +114,7 @@ public class MnemonicCodeCustom extends MnemonicCode {
         // used as a pseudo-random function. Desired length of the
         // derived key is 512 bits (= 64 bytes).
         //
-        String pass = Utils.join(words);
+        String pass = StringUtils.join(words, " ");
         String salt = "witnesskey" + passphrase;
 
         final Stopwatch watch = Stopwatch.createStarted();
@@ -119,7 +125,6 @@ public class MnemonicCodeCustom extends MnemonicCode {
     }
 
     /**
-     *
      * Convert mnemonic word list to original entropy value.
      */
     public byte[] toEntropy(List<String> words) throws MnemonicException.MnemonicLengthException, MnemonicException.MnemonicWordException, MnemonicException.MnemonicChecksumException {

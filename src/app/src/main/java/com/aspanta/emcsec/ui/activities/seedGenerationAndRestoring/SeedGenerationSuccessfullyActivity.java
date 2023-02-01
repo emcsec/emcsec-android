@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.BtcAddress;
 import com.aspanta.emcsec.db.room.BtcAddressForChange;
 import com.aspanta.emcsec.db.room.EmcAddress;
@@ -17,7 +17,7 @@ import com.aspanta.emcsec.tools.EmercoinNetworkPeerCoin;
 import com.aspanta.emcsec.tools.MnemonicCodeCustom;
 import com.aspanta.emcsec.ui.activities.MainActivity;
 
-import org.bitcoinj.core.Address;
+import org.bitcoinj.core.LegacyAddress;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
@@ -34,7 +34,7 @@ import static org.bitcoinj.core.Utils.HEX;
 
 public class SeedGenerationSuccessfullyActivity extends AppCompatActivity {
 
-    public static final String TAG = "SeedGenerationSuccessfullyActivity";
+    public static final String TAG = SeedGenerationSuccessfullyActivity.class.getSimpleName();
     private DeterministicKey child0; // key path m/0
     private DeterministicKey child1; // key path m/1
     private byte[] seed;
@@ -54,9 +54,9 @@ public class SeedGenerationSuccessfullyActivity extends AppCompatActivity {
         findViewById(R.id.btn_done).setOnClickListener(c -> {
             //don't swap methods. they should be in a such sequence
             mBtnDone.setEnabled(false);
-            SharedPreferencesHelper.getInstance().putStringValue(CURRENT_CURRENCY, "USD");
-            SharedPreferencesHelper.getInstance().putIntValue(SEEKBAR_POSITION_KEY, 1);
-            SharedPreferencesHelper.getInstance().putStringValue(SEEKBAR_VALUE_KEY, "0.00148372");
+            SPHelper.getInstance().putStringValue(CURRENT_CURRENCY, "USD");
+            SPHelper.getInstance().putIntValue(SEEKBAR_POSITION_KEY, 1);
+            SPHelper.getInstance().putStringValue(SEEKBAR_VALUE_KEY, "0.00148372");
             getAndStoreSeed();
             generateDeterministicKeysParents();
             App.getDbInstance().btcTransactionDao().deleteAll();
@@ -70,7 +70,7 @@ public class SeedGenerationSuccessfullyActivity extends AppCompatActivity {
         Log.d(TAG, "getAndStoreSeed()");
         seed = MnemonicCodeCustom.toSeed(getIntent().getStringArrayListExtra(INTENT_LIST_KEY), "");
         String strSeed = HEX.encode(seed);
-        SharedPreferencesHelper.getInstance().putStringValue(SEED, strSeed);
+        SPHelper.getInstance().putStringValue(SEED, strSeed);
     }
 
     public void generateAndStoreBtcAddressesForChange(NetworkParameters networkParameters) {
@@ -80,11 +80,11 @@ public class SeedGenerationSuccessfullyActivity extends AppCompatActivity {
         for (int i = 0; i <= 4; i++) {
             DeterministicKey child = HDKeyDerivation.deriveChildKey(child1, i);
             byte[] child1hash160 = child.getIdentifier();
-            Address a = new Address(networkParameters, child1hash160);
+            LegacyAddress a = LegacyAddress.fromPubKeyHash(networkParameters, child1hash160);
             if (i == 0) {
-                SharedPreferencesHelper.getInstance().putStringValue(CHANGE_ADDRESS_BTC, a.toString());
+                SPHelper.getInstance().putStringValue(CHANGE_ADDRESS_BTC, a.toString());
             }
-            SharedPreferencesHelper.getInstance().putStringValue(a.toString(), child.getPrivateKeyAsHex());
+            SPHelper.getInstance().putStringValue(a.toString(), child.getPrivateKeyAsHex());
             BtcAddressForChange btcAddress = new BtcAddressForChange(a.toString());
             App.getDbInstance().btcAddressForChangeDao().insertAll(btcAddress);
         }
@@ -97,9 +97,10 @@ public class SeedGenerationSuccessfullyActivity extends AppCompatActivity {
         for (int i = 0; i <= 19; i++) {
             DeterministicKey child = HDKeyDerivation.deriveChildKey(child0, i);
             byte[] child1hash160 = child.getIdentifier();
-            Address a = new Address(networkParameters, child1hash160);
 
-            SharedPreferencesHelper.getInstance().putStringValue(a.toString(), child.getPrivateKeyAsHex());
+            LegacyAddress a = LegacyAddress.fromPubKeyHash(networkParameters, child1hash160);
+
+            SPHelper.getInstance().putStringValue(a.toString(), child.getPrivateKeyAsHex());
             BtcAddress btcAddress = new BtcAddress("", a.toString());
             App.getDbInstance().btcAddressDao().insertAll(btcAddress);
         }
@@ -114,9 +115,9 @@ public class SeedGenerationSuccessfullyActivity extends AppCompatActivity {
             byte[] child1hash160 = child.getIdentifier();
             com.matthewmitchell.peercoinj.core.Address a = new com.matthewmitchell.peercoinj.core.Address(networkParameters, child1hash160);
             if (i == 0) {
-                SharedPreferencesHelper.getInstance().putStringValue(CHANGE_ADDRESS_EMC, a.toString());
+                SPHelper.getInstance().putStringValue(CHANGE_ADDRESS_EMC, a.toString());
             }
-            SharedPreferencesHelper.getInstance().putStringValue(a.toString(), child.getPrivateKeyAsHex());
+            SPHelper.getInstance().putStringValue(a.toString(), child.getPrivateKeyAsHex());
             EmcAddressForChange emcAddress = new EmcAddressForChange(a.toString());
             App.getDbInstance().emcAddressForChangeDao().insertAll(emcAddress);
         }
@@ -131,7 +132,7 @@ public class SeedGenerationSuccessfullyActivity extends AppCompatActivity {
             byte[] child1hash160 = child.getIdentifier();
             com.matthewmitchell.peercoinj.core.Address a = new com.matthewmitchell.peercoinj.core.Address(networkParameters, child1hash160);
 
-            SharedPreferencesHelper.getInstance().putStringValue(a.toString(), child.getPrivateKeyAsHex());
+            SPHelper.getInstance().putStringValue(a.toString(), child.getPrivateKeyAsHex());
             EmcAddress emcAddress = new EmcAddress("", a.toString());
             App.getDbInstance().emcAddressDao().insertAll(emcAddress);
         }

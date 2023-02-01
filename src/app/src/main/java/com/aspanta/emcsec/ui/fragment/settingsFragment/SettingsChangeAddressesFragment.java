@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.ui.activities.MainActivity;
 import com.aspanta.emcsec.ui.fragment.IBaseFragment;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.dialogFragmentAddressesForTheChange.DialogFragmentAddressesForTheChangeBtc;
@@ -87,17 +87,17 @@ public class SettingsChangeAddressesFragment extends Fragment implements IBaseFr
         mRlAddressChangeEmc = view.findViewById(R.id.rl_address_for_the_change_in_emc);
         mRlAddressChangeBtc = view.findViewById(R.id.rl_address_for_the_change_in_btc);
 
-        mTvAddressChangeBtc.setText(SharedPreferencesHelper.getInstance().getStringValue(CHANGE_ADDRESS_BTC));
-        mTvAddressChangeEmc.setText(SharedPreferencesHelper.getInstance().getStringValue(CHANGE_ADDRESS_EMC));
+        mTvAddressChangeBtc.setText(SPHelper.getInstance().getStringValue(CHANGE_ADDRESS_BTC));
+        mTvAddressChangeEmc.setText(SPHelper.getInstance().getStringValue(CHANGE_ADDRESS_EMC));
 
 
     }
 
     public void setAddressForChangeBtc() {
-        mTvAddressChangeBtc.setText(SharedPreferencesHelper.getInstance().getStringValue(CHANGE_ADDRESS_BTC));
+        mTvAddressChangeBtc.setText(SPHelper.getInstance().getStringValue(CHANGE_ADDRESS_BTC));
     }
 
     public void setAddressForChangeEmc() {
-        mTvAddressChangeEmc.setText(SharedPreferencesHelper.getInstance().getStringValue(CHANGE_ADDRESS_EMC));
+        mTvAddressChangeEmc.setText(SPHelper.getInstance().getStringValue(CHANGE_ADDRESS_EMC));
     }
 }

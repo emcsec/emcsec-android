@@ -6,14 +6,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.BtcAddress;
 import com.aspanta.emcsec.db.room.EmcAddress;
 import com.aspanta.emcsec.model.IModel;
 import com.aspanta.emcsec.model.ModelImpl;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.SettingsFragment;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,12 +27,12 @@ import rx.schedulers.Schedulers;
 
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.BTC_EXCHANGE_RATE_KEY;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.EMC_COURSE_KEY;
-import static com.aspanta.emcsec.tools.Config.showAlertDialog;
+import static com.aspanta.emcsec.tools.Config.EMC_EXCHANGE_RATE_KEY;
+import static com.aspanta.emcsec.ui.activities.MainActivity.showAlertDialog;
 import static com.aspanta.emcsec.tools.InternetConnection.internetConnectionChecking;
 
 public class SettingsPresenter {
@@ -60,7 +59,7 @@ public class SettingsPresenter {
 
         mSpinner = spinner;
         mArrayAdapter = arrayAdapter;
-//        currency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+//        currency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         currency = selectedCurrency;
         settingsFragment.showPleaseWaitDialog();
         if (internetConnectionChecking(mContext)) {
@@ -70,7 +69,7 @@ public class SettingsPresenter {
         } else {
             settingsFragment.hidePleaseWaitDialog();
             showAlertDialog(mContext, mContext.getString(R.string.could_not_connect));
-            mSpinner.setSelection(mArrayAdapter.getPosition(SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY)));
+            mSpinner.setSelection(mArrayAdapter.getPosition(SPHelper.getInstance().getStringValue(CURRENT_CURRENCY)));
         }
     }
 
@@ -98,35 +97,38 @@ public class SettingsPresenter {
         if (response.isSuccessful()) {
             try {
                 Log.d(TAG, "response.isSuccessful() EMC started");
-                JSONArray jsonArray = new JSONArray(response.body().toString());
-                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                JSONObject jsonObject = new JSONObject(response.body().toString());
+                JSONObject data = jsonObject.getJSONObject("data");
+                JSONObject quotes = data.getJSONObject("quotes");
+
+                Log.d(TAG, "responseHandlerCourseBtc: " + quotes.toString());
 
                 switch (currency) {
                     case "USD":
-                        courseEmc = jsonObject.getString("price_usd");
+                        courseEmc = quotes.getJSONObject("USD").getString("price");
                         break;
                     case "EUR":
-                        courseEmc = jsonObject.getString("price_eur");
+                        courseEmc = quotes.getJSONObject("EUR").getString("price");
                         break;
                     case "CNY":
-                        courseEmc = jsonObject.getString("price_cny");
+                        courseEmc = quotes.getJSONObject("CNY").getString("price");
                         break;
                     case "RUB":
-                        courseEmc = jsonObject.getString("price_rub");
+                        courseEmc = quotes.getJSONObject("RUB").getString("price");
                         break;
                 }
 
-                SharedPreferencesHelper.getInstance().putStringValue(CURRENT_CURRENCY, currency);
+                SPHelper.getInstance().putStringValue(CURRENT_CURRENCY, currency);
 
                 BigDecimal emercoinDecimalCourse = new BigDecimal(courseEmc);
-                SharedPreferencesHelper.getInstance().putStringValue(EMC_COURSE_KEY,
+                SPHelper.getInstance().putStringValue(EMC_EXCHANGE_RATE_KEY,
                         String.valueOf(emercoinDecimalCourse.setScale(2, BigDecimal.ROUND_HALF_UP)));
 
-                BigDecimal emercoinDecimalBalance = new BigDecimal(SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_KEY));
+                BigDecimal emercoinDecimalBalance = new BigDecimal(SPHelper.getInstance().getStringValue(EMC_BALANCE_KEY));
                 BigDecimal emercoinRoundBalanceUsd = emercoinDecimalBalance.multiply(emercoinDecimalCourse)
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
 
-                SharedPreferencesHelper.getInstance().putStringValue(EMC_BALANCE_IN_USD_KEY,
+                SPHelper.getInstance().putStringValue(EMC_BALANCE_IN_USD_KEY,
                         String.valueOf(emercoinRoundBalanceUsd));
 
                 settingsFragment.hidePleaseWaitDialog();
@@ -148,35 +150,39 @@ public class SettingsPresenter {
         if (response.isSuccessful()) {
             try {
                 Log.d(TAG, "response.isSuccessful() BTC started");
-                JSONArray jsonArray = new JSONArray(response.body().toString());
-                JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                JSONObject jsonObject = new JSONObject(response.body().toString());
+                JSONObject data = jsonObject.getJSONObject("data");
+                JSONObject quotes = data.getJSONObject("quotes");
+
+                Log.d(TAG, "responseHandlerCourseBtc: " + quotes.toString());
 
                 switch (currency) {
                     case "USD":
-                        courseBtc = jsonObject.getString("price_usd");
+                        courseBtc = quotes.getJSONObject("USD").getString("price");
                         break;
                     case "EUR":
-                        courseBtc = jsonObject.getString("price_eur");
+                        courseBtc = quotes.getJSONObject("EUR").getString("price");
                         break;
                     case "CNY":
-                        courseBtc = jsonObject.getString("price_cny");
+                        courseBtc = quotes.getJSONObject("CNY").getString("price");
                         break;
                     case "RUB":
-                        courseBtc = jsonObject.getString("price_rub");
+                        courseBtc = quotes.getJSONObject("RUB").getString("price");
                         break;
                 }
 
-                SharedPreferencesHelper.getInstance().putStringValue(CURRENT_CURRENCY, currency);
+                SPHelper.getInstance().putStringValue(CURRENT_CURRENCY, currency);
 
                 BigDecimal bitcoinDecimalCourse = new BigDecimal(courseBtc);
-                SharedPreferencesHelper.getInstance().putStringValue(BTC_COURSE_KEY,
+                SPHelper.getInstance().putStringValue(BTC_EXCHANGE_RATE_KEY,
                         String.valueOf(bitcoinDecimalCourse.setScale(2, BigDecimal.ROUND_HALF_UP)));
 
-                BigDecimal bitcoinDecimalBalance = new BigDecimal(SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_KEY));
+                BigDecimal bitcoinDecimalBalance = new BigDecimal(SPHelper.getInstance().getStringValue(BTC_BALANCE_KEY));
                 BigDecimal bitcoinRoundBalanceUsd = bitcoinDecimalBalance.multiply(bitcoinDecimalCourse)
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
 
-                SharedPreferencesHelper.getInstance().putStringValue(BTC_BALANCE_IN_USD_KEY,
+                SPHelper.getInstance().putStringValue(BTC_BALANCE_IN_USD_KEY,
                         String.valueOf(bitcoinRoundBalanceUsd));
 
                 settingsFragment.hidePleaseWaitDialog();
@@ -195,7 +201,7 @@ public class SettingsPresenter {
 
     private void showResponseException(Throwable throwable) {
 
-        mSpinner.setSelection(mArrayAdapter.getPosition(SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY)));
+        mSpinner.setSelection(mArrayAdapter.getPosition(SPHelper.getInstance().getStringValue(CURRENT_CURRENCY)));
         settingsFragment.hidePleaseWaitDialog();
         showAlertDialog(mContext, mContext.getString(R.string.could_not_connect));
     }

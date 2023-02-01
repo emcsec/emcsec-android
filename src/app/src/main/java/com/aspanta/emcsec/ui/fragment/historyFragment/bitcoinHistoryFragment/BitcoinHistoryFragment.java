@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.historyPojos.BtcTransaction;
 import com.aspanta.emcsec.presenter.historyPresenter.HistoryBitcoinPresenter;
 import com.aspanta.emcsec.presenter.historyPresenter.IHistoryPresenter;
@@ -31,9 +31,9 @@ import java.util.List;
 
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_COURSE_KEY;
+import static com.aspanta.emcsec.tools.Config.BTC_EXCHANGE_RATE_KEY;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
-import static com.aspanta.emcsec.tools.Config.showAlertDialog;
+import static com.aspanta.emcsec.ui.activities.MainActivity.showAlertDialog;
 import static com.aspanta.emcsec.tools.InternetConnection.internetConnectionChecking;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.downloadProgressDashboard;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.totalProgressDashboard;
@@ -58,14 +58,14 @@ public class BitcoinHistoryFragment extends Fragment implements IBitcoinHistoryF
     public void onResume() {
         super.onResume();
         if (listener != null) {
-            SharedPreferencesHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
+            SPHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
         }
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter = new HistoryBitcoinPresenter(getContext(), this, null);
+        mPresenter = new HistoryBitcoinPresenter(getActivity(), this, null);
     }
 
     @Override
@@ -83,31 +83,33 @@ public class BitcoinHistoryFragment extends Fragment implements IBitcoinHistoryF
                 mSwipeRefreshLayout.refreshComplete();
             } else {
                 String error = getString(R.string.could_not_connect);
-                showAlertDialog(getContext(), error);
+                showAlertDialog(getActivity(), error);
+                mSwipeRefreshLayout.refreshComplete();
+
             }
         });
 
-        String currentCurrency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        String currentCurrency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         if (currentCurrency.equals("RUB")) {
             currentCurrency = "RUR";
         }
 
-        mTvBalanceBtc.setText(SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
-        String wholeRowBalanceBtc = "<b>~" + SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
-                currentCurrency + " (" + "<b>1 </b> BTC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(BTC_COURSE_KEY) + " </b>" +
+        mTvBalanceBtc.setText(SPHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
+        String wholeRowBalanceBtc = "<b>~" + SPHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
+                currentCurrency + " (" + "<b>1 </b> BTC = <b>" + SPHelper.getInstance().getStringValue(BTC_EXCHANGE_RATE_KEY) + " </b>" +
                 currentCurrency + ")";
 
         mTvWholeRowBalanceBtc.setText(Html.fromHtml(wholeRowBalanceBtc));
 
         String finalCurrentCurrency = currentCurrency;
         listener = (sharedPreferences, key) -> {
-            mTvBalanceBtc.setText(SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
-            mTvWholeRowBalanceBtc.setText(Html.fromHtml("<b>~" + SharedPreferencesHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
-                    finalCurrentCurrency + " (" + "<b>1 </b> BTC = <b>" + SharedPreferencesHelper.getInstance().getStringValue(BTC_COURSE_KEY) + " </b>" +
+            mTvBalanceBtc.setText(SPHelper.getInstance().getStringValue(BTC_BALANCE_KEY) + " BTC");
+            mTvWholeRowBalanceBtc.setText(Html.fromHtml("<b>~" + SPHelper.getInstance().getStringValue(BTC_BALANCE_IN_USD_KEY) + " </b>" +
+                    finalCurrentCurrency + " (" + "<b>1 </b> BTC = <b>" + SPHelper.getInstance().getStringValue(BTC_EXCHANGE_RATE_KEY) + " </b>" +
                     finalCurrentCurrency + ")"));
 
         };
-        SharedPreferencesHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
+        SPHelper.getInstance().getSharedPreferencesLink().registerOnSharedPreferenceChangeListener(listener);
 
         mBtcTransactionList = App.getDbInstance().btcTransactionDao().getAll();
         setBtcTransactionsList(mBtcTransactionList);
@@ -168,7 +170,7 @@ public class BitcoinHistoryFragment extends Fragment implements IBitcoinHistoryF
     @Override
     public void hidePleaseWaitDialog() {
         if (dialog != null) {
-            dialog.dismiss();
+            dialog.dismissAllowingStateLoss();
         }
     }
 
@@ -190,7 +192,7 @@ public class BitcoinHistoryFragment extends Fragment implements IBitcoinHistoryF
     public void onStop() {
         super.onStop();
         if (listener != null) {
-            SharedPreferencesHelper.getInstance().getSharedPreferencesLink().unregisterOnSharedPreferenceChangeListener(listener);
+            SPHelper.getInstance().getSharedPreferencesLink().unregisterOnSharedPreferenceChangeListener(listener);
         }
     }
 }

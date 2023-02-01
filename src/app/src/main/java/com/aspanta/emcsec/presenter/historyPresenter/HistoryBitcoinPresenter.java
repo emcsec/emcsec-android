@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.BtcAddress;
 import com.aspanta.emcsec.db.room.BtcAddressForChange;
 import com.aspanta.emcsec.db.room.historyPojos.BtcTransaction;
@@ -18,6 +18,7 @@ import com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment;
 import com.aspanta.emcsec.ui.fragment.historyFragment.bitcoinHistoryFragment.IBitcoinHistoryFragment;
 
 import org.bitcoinj.core.Address;
+import org.bitcoinj.core.LegacyAddress;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
@@ -37,13 +38,20 @@ import java.util.Set;
 
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.BTC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.BTC_COURSE_KEY;
-import static com.aspanta.emcsec.tools.Config.showAlertDialog;
+import static com.aspanta.emcsec.tools.Config.BTC_EXCHANGE_RATE_KEY;
+import static com.aspanta.emcsec.tools.Config.METHOD_GET_BALANCE;
+import static com.aspanta.emcsec.tools.Config.METHOD_GET_HEADER;
+import static com.aspanta.emcsec.tools.Config.METHOD_GET_HISTORY;
+import static com.aspanta.emcsec.tools.Config.METHOD_TRANSACTION_GET;
+import static com.aspanta.emcsec.tools.JsonRpcHelper.createRpcRequest;
+import static com.aspanta.emcsec.ui.activities.MainActivity.showAlertDialog;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.downloadProgressDashboard;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.totalProgressDashboard;
 import static org.bitcoinj.core.Utils.HEX;
 
 public class HistoryBitcoinPresenter implements IHistoryPresenter {
+
+    private static final String TAG = "HistoryBitcoinPresenter";
 
     //fields for getting balance
     private String balanceBtc;
@@ -150,7 +158,7 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
             connectTaskBtc.doProgress();
 
             String address = listStringAllAddresses.get(positionGetHistory);
-            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 4,\"method\":\"blockchain.address.get_history\",\"params\":[\"" + address + "\"]}";
+            String jsonRequest = createRpcRequest(4, METHOD_GET_HISTORY, address);
             mTcpClientBtc.sendMessage(jsonRequest);
         }
     }
@@ -167,7 +175,7 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
         connectTaskBtc.doProgress();
 
         String tx_hash = mListSupportPojos.get(mPositionOfSupportPojo).getTx_hash();
-        String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 5,\"method\":\"blockchain.transaction.get\",\"params\":[\"" + tx_hash + "\"]}";
+        String jsonRequest = createRpcRequest(5, METHOD_TRANSACTION_GET, tx_hash);
         mTcpClientBtc.sendMessage(jsonRequest);
     }
 
@@ -183,7 +191,7 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
         connectTaskBtc.doProgress();
 
         String height = mBtcTransactionList.get(positionGetHeader).getBlock();
-        String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 6,\"method\":\"blockchain.block.get_header\",\"params\":[\"" + height + "\"]}";
+        String jsonRequest = createRpcRequest(6, METHOD_GET_HEADER, height);
         mTcpClientBtc.sendMessage(jsonRequest);
     }
 
@@ -208,7 +216,7 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
             connectTaskBtc.doProgress();
 
             String prevTxHash = inputsList.get(inputsPos).getPrev_tx_hash();
-            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 7,\"method\":\"blockchain.transaction.get\",\"params\":[\"" + prevTxHash + "\"]}";
+            String jsonRequest = createRpcRequest(7, METHOD_TRANSACTION_GET, prevTxHash);
             mTcpClientBtc.sendMessage(jsonRequest);
         } else {
             inputsPos = 0;
@@ -220,7 +228,7 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
         @Override
         protected TcpClientBtc doInBackground(String... message) {
 
-            mTcpClientBtc = new TcpClientBtc(response -> {
+            mTcpClientBtc = new TcpClientBtc((String response) -> {
 
                 try {
                     JSONObject jsonObject = new JSONObject(response);
@@ -280,6 +288,14 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
                         byte[] raw = HEX.decode(rawTransaction);
                         Transaction transaction = new Transaction(MainNetParams.get(), raw);
 
+                        if (transaction.hasWitnesses()) {
+                            Log.d(TAG, "TRANSACTION HAS WITNESS");
+                            Log.d(TAG, transaction.toString());
+
+                        } else {
+                            Log.d(TAG, "TRANSACTION WITHOUT WITNESS");
+                        }
+
                         List<Input> inputList = new ArrayList<>();
                         for (TransactionInput transactionInput : transaction.getInputs()) {
                             inputList.add(new Input(transactionInput.getOutpoint().getHash().toString(), transactionInput.getOutpoint().getIndex()));
@@ -291,8 +307,17 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
                         }
 
                         String transactionType = "";
-                        Address addressFromFirstInput = new Address(btcParams,
-                                Utils.sha256hash160(transaction.getInputs().get(0).getScriptSig().getPubKey()));
+                        TransactionInput input = transaction.getInputs().get(0);
+                        LegacyAddress addressFromFirstInput;
+
+                        if (input.hasWitness()) {
+                            Log.d(TAG, HEX.encode(input.getWitness().getPush(1)));
+                            addressFromFirstInput = LegacyAddress
+                                    .fromPubKeyHash(btcParams, Utils.sha256hash160(input.getWitness().getPush(1)));
+                        } else {
+                            addressFromFirstInput = LegacyAddress
+                                    .fromPubKeyHash(btcParams, Utils.sha256hash160(input.getScriptSig().getPubKey()));
+                        }
 
                         if (!listStringAddresses.contains(addressFromFirstInput.toString()) & !listStringAddressesForChange.contains(addressFromFirstInput.toString())) {
                             transactionType = "Receive";
@@ -380,6 +405,8 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
                                 }
                             }
                         }
+
+
                         mPositionOfSupportPojo++;
                         if (mPositionOfSupportPojo == mListSupportPojos.size()) {
                             mBtcTransactionList.addAll(mBtcTransactionSet);
@@ -456,7 +483,7 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
                         mBitcoinHistoryFragment.hidePleaseWaitDialog();
                     }
                     if (mDashboardFragment != null) {
-                        Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Bitcoin Presenter");
+//                        Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Bitcoin Presenter");
                         mDashboardFragment.hidePleaseWaitDialogForBitcoinHistoryPresenter();
                     }
                 }
@@ -481,7 +508,7 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
             }
 
             if (mDashboardFragment != null) {
-                Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Bitcoin Presenter");
+                Log.d("DashFrHidePleaseWait", "Hide History Bitcoin Presenter");
                 mDashboardFragment.hidePleaseWaitDialogForBitcoinHistoryPresenter();
             }
             if (mBitcoinHistoryFragment != null) {
@@ -504,8 +531,8 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
 
-            Log.d("SET BTC TRANSACTION SIZE", mBtcTransactionSet.size() + "");
-            Log.d("SET BTC TRANSACTION INFO", mBtcTransactionSet.toString());
+//            Log.d("SET BTC TRANSACTION SIZE", mBtcTransactionSet.size() + "");
+//            Log.d("SET BTC TRANSACTION INFO", mBtcTransactionSet.toString());
 
             if (values[0].contains("error")) {
                 showAlertDialog(mContext, values[1]);
@@ -513,7 +540,7 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
                     mBitcoinHistoryFragment.hidePleaseWaitDialog();
                 }
                 if (mDashboardFragment != null) {
-                    Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Bitcoin Presenter");
+//                    Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Bitcoin Presenter");
                     mDashboardFragment.hidePleaseWaitDialogForBitcoinHistoryPresenter();
                 }
                 mTcpClientBtc.stopClient();
@@ -565,7 +592,7 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
                     mBitcoinHistoryFragment.hidePleaseWaitDialog();
                 }
                 if (mDashboardFragment != null) {
-                    Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Bitcoin Presenter");
+//                    Log.d("DashboardFragmentHidePleaseWaitDialog", "Hide History Bitcoin Presenter");
                     mDashboardFragment.hidePleaseWaitDialogForBitcoinHistoryPresenter();
                 }
                 this.cancel(true);
@@ -636,7 +663,7 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
                         Log.d("balanceUnconfirmed", balanceUnconfirmed);
 
                         if (balanceUnconfirmed.contains("-") | listStringAddressesForChange.contains(listStringAllAddresses.get(countBtc))) {
-                            int totalValue = Integer.valueOf(balanceConfirmed) + Integer.valueOf(balanceUnconfirmed);
+                            long totalValue = Long.valueOf(balanceConfirmed) + Long.valueOf(balanceUnconfirmed);
                             satoshiSumBtc += totalValue;
                         } else {
                             satoshiSumBtc += Integer.valueOf(balanceConfirmed);
@@ -676,14 +703,16 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
 
             BigDecimal balanceBtcBigDecimal = new BigDecimal(satoshiSumBtc).divide(new BigDecimal(100000000));
             balanceBtc = String.valueOf(balanceBtcBigDecimal);
-            SharedPreferencesHelper.getInstance().putStringValue(BTC_BALANCE_KEY, balanceBtc);
+            SPHelper.getInstance().putStringValue(BTC_BALANCE_KEY, balanceBtc);
 
-            String courseBtc = SharedPreferencesHelper.getInstance().getStringValue(BTC_COURSE_KEY);
-            BigDecimal courseBigDecimal = new BigDecimal(courseBtc);
+            String courseBtc = SPHelper.getInstance().getStringValue(BTC_EXCHANGE_RATE_KEY);
 
-            BigDecimal balanceBtcInUsdBigDecimal = courseBigDecimal.multiply(balanceBtcBigDecimal);
-            SharedPreferencesHelper.getInstance().putStringValue(BTC_BALANCE_IN_USD_KEY,
-                    String.valueOf(balanceBtcInUsdBigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP)));
+            if (courseBtc != null && !courseBtc.equals("?") && !courseBtc.isEmpty()) {
+                BigDecimal courseBigDecimal = new BigDecimal(courseBtc);
+                BigDecimal balanceBtcInUsdBigDecimal = courseBigDecimal.multiply(balanceBtcBigDecimal);
+                SPHelper.getInstance().putStringValue(BTC_BALANCE_IN_USD_KEY,
+                        String.valueOf(balanceBtcInUsdBigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP)));
+            }
 
             Log.d("BALANCE BTC", balanceBtc);
             mTcpClientBtcGetBalance.stopClient();
@@ -695,7 +724,7 @@ public class HistoryBitcoinPresenter implements IHistoryPresenter {
         String btcAddress = listStringAllAddresses.get(countBtc);
         if (mTcpClientBtcGetBalance != null) {
             downloadProgress++;
-            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 4,\"method\":\"blockchain.address.get_balance\",\"params\":[\"" + btcAddress + "\"]}";
+            String jsonRequest = createRpcRequest(4, METHOD_GET_BALANCE, btcAddress);
             mTcpClientBtcGetBalance.sendMessage(jsonRequest);
         }
     }

@@ -42,6 +42,13 @@
     <dimen name="margin_btn_send_address_emc">96dp</dimen>
     <dimen name="transaction_amount_width">150dp</dimen>
     <dimen name="transaction_detail_width">290dp</dimen>
+    <dimen name="pin_button_size">56dp</dimen>
 
+    <!-- Dividers -->
+    <dimen name="divider_xs">4dp</dimen>
+    <dimen name="divider_s">8dp</dimen>
+    <dimen name="divider_m">12dp</dimen>
+    <dimen name="divider_l">16dp</dimen>
+    <dimen name="divider_xl">20dp</dimen>
 
 </resources>

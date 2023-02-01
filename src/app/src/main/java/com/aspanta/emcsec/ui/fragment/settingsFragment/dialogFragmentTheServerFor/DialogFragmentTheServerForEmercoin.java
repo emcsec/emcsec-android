@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.ui.fragment.IBaseFragment;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.SettingsServersFragment;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.SettingsServersFragmentForGenerateActivity;
@@ -57,8 +57,8 @@ public class DialogFragmentTheServerForEmercoin extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_fragment_the_server_for_emercoin, container, false);
         init(view);
 
-        mEtHost.setText(SharedPreferencesHelper.getInstance().getStringValue(SERVER_HOST_EMC));
-        mEtPort.setText(SharedPreferencesHelper.getInstance().getIntValue(SERVER_PORT_EMC) + "");
+        mEtHost.setText(SPHelper.getInstance().getStringValue(SERVER_HOST_EMC));
+        mEtPort.setText(SPHelper.getInstance().getIntValue(SERVER_PORT_EMC) + "");
 
         setCancelable(false);
         validateFields();
@@ -72,8 +72,8 @@ public class DialogFragmentTheServerForEmercoin extends DialogFragment {
 
         mBtnSave.setOnClickListener(o -> {
 
-            SharedPreferencesHelper.getInstance().putStringValue(SERVER_HOST_EMC, mEtHost.getText().toString());
-            SharedPreferencesHelper.getInstance().putIntValue(SERVER_PORT_EMC, Integer.parseInt(mEtPort.getText().toString()));
+            SPHelper.getInstance().putStringValue(SERVER_HOST_EMC, mEtHost.getText().toString());
+            SPHelper.getInstance().putIntValue(SERVER_PORT_EMC, Integer.parseInt(mEtPort.getText().toString()));
 
             if (sSettingsServersFragment != null) {
                 sSettingsServersFragment.setHostPortSSLEmc();

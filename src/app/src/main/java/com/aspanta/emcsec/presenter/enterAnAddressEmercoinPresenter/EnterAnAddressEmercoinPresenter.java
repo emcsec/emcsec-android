@@ -1,6 +1,7 @@
 package com.aspanta.emcsec.presenter.enterAnAddressEmercoinPresenter;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -8,7 +9,7 @@ import android.widget.Toast;
 
 import com.aspanta.emcsec.App;
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.db.room.EmcAddress;
 import com.aspanta.emcsec.db.room.EmcAddressForChange;
 import com.aspanta.emcsec.db.room.utxosUnconfirmed.UTXOEmercoinAlreadyUsed;
@@ -48,8 +49,11 @@ import static com.aspanta.emcsec.tools.Config.CHANGE_ADDRESS_EMC;
 import static com.aspanta.emcsec.tools.Config.CURRENT_CURRENCY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_IN_USD_KEY;
 import static com.aspanta.emcsec.tools.Config.EMC_BALANCE_KEY;
-import static com.aspanta.emcsec.tools.Config.EMC_COURSE_KEY;
-import static com.aspanta.emcsec.tools.Config.showAlertDialog;
+import static com.aspanta.emcsec.tools.Config.EMC_EXCHANGE_RATE_KEY;
+import static com.aspanta.emcsec.tools.Config.METHOD_GET_BALANCE;
+import static com.aspanta.emcsec.tools.Config.METHOD_LISTUNSPENT;
+import static com.aspanta.emcsec.tools.JsonRpcHelper.createRpcRequest;
+import static com.aspanta.emcsec.ui.activities.MainActivity.showAlertDialog;
 import static com.aspanta.emcsec.tools.InternetConnection.internetConnectionChecking;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.downloadProgressDashboard;
 import static com.aspanta.emcsec.ui.fragment.dashboardFragment.DashboardFragment.totalProgressDashboard;
@@ -64,7 +68,7 @@ public class EnterAnAddressEmercoinPresenter implements IEnterAnAddressEmercoinP
     //fields for getting balance
     private String balanceEmc;
     private int countEmc;
-    private int satoshiSumEmc;
+    private long satoshiSumEmc;
     private String currency;
 
     //fields for sending emc
@@ -142,7 +146,7 @@ public class EnterAnAddressEmercoinPresenter implements IEnterAnAddressEmercoinP
         this.addressToSend = address;
         this.amountToSend = (long) (Double.valueOf(amountToSend) * 1000000);
 
-        String balance = SharedPreferencesHelper.getInstance().getStringValue(EMC_BALANCE_KEY);
+        String balance = SPHelper.getInstance().getStringValue(EMC_BALANCE_KEY);
         if (balance != null && !balance.equals("") && !balance.equals("?")) {
             long balanceLong = (long) (Double.valueOf(balance) * 1000000);
             if (balanceLong <= this.amountToSend) {
@@ -151,7 +155,7 @@ public class EnterAnAddressEmercoinPresenter implements IEnterAnAddressEmercoinP
             }
         }
 
-        addressForChange = SharedPreferencesHelper.getInstance().getStringValue(CHANGE_ADDRESS_EMC);
+        addressForChange = SPHelper.getInstance().getStringValue(CHANGE_ADDRESS_EMC);
         mFragment.showPleaseWaitDialog();
 
         for (EmcAddress emcAddress : App.getDbInstance().emcAddressDao().getAll()) {
@@ -173,13 +177,15 @@ public class EnterAnAddressEmercoinPresenter implements IEnterAnAddressEmercoinP
             String address = mListEmcAddresses.get(positionGetListUnspent);
             downloadProgressDashboard++;
             mConnectTaskEmc.doProgress();
-            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 2,\"method\":\"blockchain.address.listunspent\",\"params\":[\"" + address + "\"]}";
+
+            String jsonRequest = createRpcRequest(2, METHOD_LISTUNSPENT, address);
             mTcpClientEmc.sendMessage(jsonRequest);
         }
     }
 
     private class ConnectTaskEmc extends AsyncTask<String, String, TcpClientEmc> {
 
+        @SuppressLint("LongLogTag")
         @Override
         protected TcpClientEmc doInBackground(String... message) {
 
@@ -269,9 +275,9 @@ public class EnterAnAddressEmercoinPresenter implements IEnterAnAddressEmercoinP
                                     Log.d("utxosValue on start of for each  ", utxosValue + "");
 
                                     /*Formation an outpoint with position of utxo in previous transaction
-                                    *and with hash of previous transaction.
-                                    *Signing this outpoint with privKey and formation a signed input.
-                                    */
+                                     *and with hash of previous transaction.
+                                     *Signing this outpoint with privKey and formation a signed input.
+                                     */
 
                                     utxoEmercoinAlreadyUsedList.add(new UTXOEmercoinAlreadyUsed(
                                             utxo.getHash().toString(),
@@ -324,7 +330,7 @@ public class EnterAnAddressEmercoinPresenter implements IEnterAnAddressEmercoinP
 
                                         for (int i = 0; i < transaction.getInputs().size(); i++) {
                                             TransactionInput transactionInput1 = transaction.getInput(i);
-                                            byte[] privKeyBytes = HEX.decode(SharedPreferencesHelper.getInstance().getStringValue(mUTXOs.get(i).getAddress()));
+                                            byte[] privKeyBytes = HEX.decode(SPHelper.getInstance().getStringValue(mUTXOs.get(i).getAddress()));
                                             ECKey ecKey = ECKey.fromPrivate(privKeyBytes);
 
                                             Script scriptPubKey = null;
@@ -401,6 +407,7 @@ public class EnterAnAddressEmercoinPresenter implements IEnterAnAddressEmercoinP
             publishProgress("progress");
         }
 
+        @SuppressLint("LongLogTag")
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
@@ -502,10 +509,11 @@ public class EnterAnAddressEmercoinPresenter implements IEnterAnAddressEmercoinP
     public void unsubscribe() {
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void getEmcBalance() {
 
-        currency = SharedPreferencesHelper.getInstance().getStringValue(CURRENT_CURRENCY);
+        currency = SPHelper.getInstance().getStringValue(CURRENT_CURRENCY);
         Log.d("CURRENT_CURRENCY", currency);
 
         balanceEmc = null;
@@ -553,10 +561,10 @@ public class EnterAnAddressEmercoinPresenter implements IEnterAnAddressEmercoinP
                         Log.d("balanceUnconfirmed", balanceUnconfirmed);
 
                         if (balanceUnconfirmed.contains("-") | mListEmcAddressesForChange.contains(mListEmcAddresses.get(countEmc))) {
-                            int totalValue = Integer.valueOf(balanceConfirmed) + Integer.valueOf(balanceUnconfirmed);
+                            long totalValue = Long.valueOf(balanceConfirmed) + Long.valueOf(balanceUnconfirmed);
                             satoshiSumEmc += totalValue;
                         } else {
-                            satoshiSumEmc += Integer.valueOf(balanceConfirmed);
+                            satoshiSumEmc += Long.valueOf(balanceConfirmed);
                         }
 
                         countEmc++;
@@ -603,13 +611,13 @@ public class EnterAnAddressEmercoinPresenter implements IEnterAnAddressEmercoinP
             } else {
                 BigDecimal balanceEmcBigDecimal = new BigDecimal(satoshiSumEmc).divide(new BigDecimal(1000000));
                 balanceEmc = String.valueOf(balanceEmcBigDecimal);
-                SharedPreferencesHelper.getInstance().putStringValue(EMC_BALANCE_KEY, balanceEmc);
+                SPHelper.getInstance().putStringValue(EMC_BALANCE_KEY, balanceEmc);
 
-                String courseEmc = SharedPreferencesHelper.getInstance().getStringValue(EMC_COURSE_KEY);
+                String courseEmc = SPHelper.getInstance().getStringValue(EMC_EXCHANGE_RATE_KEY);
                 BigDecimal courseBigDecimal = new BigDecimal(courseEmc);
 
                 BigDecimal balanceEmcInUsdBigDecimal = courseBigDecimal.multiply(balanceEmcBigDecimal);
-                SharedPreferencesHelper.getInstance().putStringValue(EMC_BALANCE_IN_USD_KEY,
+                SPHelper.getInstance().putStringValue(EMC_BALANCE_IN_USD_KEY,
                         String.valueOf(balanceEmcInUsdBigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP)));
 
                 Log.d("BALANCE EMC", balanceEmc);
@@ -634,7 +642,7 @@ public class EnterAnAddressEmercoinPresenter implements IEnterAnAddressEmercoinP
         if (mTcpClientEmc != null) {
             downloadProgressDashboard++;
             mConnectTaskEmcGetBalance.doProgress();
-            String jsonRequest = "{\"jsonrpc\":\"2.0\",\"id\": 2,\"method\":\"blockchain.address.get_balance\",\"params\":[\"" + emcAddress + "\"]}";
+            String jsonRequest = createRpcRequest(2, METHOD_GET_BALANCE, emcAddress);
             mTcpClientEmc.sendMessage(jsonRequest);
         }
     }

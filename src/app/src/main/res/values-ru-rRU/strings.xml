@@ -118,6 +118,7 @@
     <string name="operations">Операции</string>
     <string name="servers">Сервер</string>
     <string name="addresses_for_the_change">Адреса для сдачи</string>
+    <string name="address_for_the_change">Адрес для сдачи</string>
     <string name="address_for_the_change_in_emercoin">Адрес для сдачи Emercoin</string>
     <string name="address_for_the_change_in_bitcoin">Адрес для сдачи Bitcoin</string>
     <string name="the_server_for_emercoin">Сервер для Emercoin</string>
@@ -126,6 +127,8 @@
     <string name="confirm_a_pin">Подтвердить PIN</string>
     <string name="confirm">Ок</string>
     <string name="would_you_like_to_set_up_a_pin">Вы хотите\nустановить PIN?</string>
+    <string name="would_you_like_to_set_up_fingerprint">Вы хотите установить\nFingerprint?</string>
+
     <string name="text_for_about">
         Emercoin Secure - удобный в использовании и легкий криптокошелек на протоколе Electrum. Он поддерживает две криптовалюты - Эмеркоин и Биткоин, которые хранятся в одном кошельке.\n\nОн - безопасный, приватные ключи хранятся на устройстве пользователя и защищены seed-фразой. И компактный - не нужно хранить весь блокчейн на устройстве.\n\nВы, также, можете использовать кошелек с собственными серверами Electrum.\n\nКошелек Emercoin Secure доступен для смартфонов, планшетов и стационарных компьютеров. Вы можете использовать один кошелек на нескольких устройствах одновременно.\n
     </string>
@@ -145,4 +148,8 @@
     <string name="recommended">Рекомендуемая:</string>
     <string name="custom">Своя:</string>
     <string name="minimum_0_00001">Минимум 0.00001</string>
+    <string name="private_key">Приватный ключ</string>
+    <string name="fingerprint">Fingerprint</string>
+    <string name="pin_code_fingerprint_not_recognized">Fingerprint not recognized</string>
+
 </resources>

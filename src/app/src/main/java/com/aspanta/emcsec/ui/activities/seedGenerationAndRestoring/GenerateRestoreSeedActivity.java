@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.ui.activities.MainActivity;
 import com.aspanta.emcsec.ui.fragment.IBaseFragment;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.SettingsServersFragmentForGenerateActivity;
@@ -29,16 +29,16 @@ public class GenerateRestoreSeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_restore_seed);
 
-        if (!SharedPreferencesHelper.getInstance().getStringValue(SEED).isEmpty() &&
-                !SharedPreferencesHelper.getInstance().getStringValue(SEED).equals("?")) {
+        if (!SPHelper.getInstance().getStringValue(SEED).isEmpty() &&
+                !SPHelper.getInstance().getStringValue(SEED).equals("?")) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
 
-        SharedPreferencesHelper.getInstance().putStringValue(SERVER_HOST_BTC, "btcx.emercoin.net");
-        SharedPreferencesHelper.getInstance().putIntValue(SERVER_PORT_BTC, 50001);
-        SharedPreferencesHelper.getInstance().putStringValue(SERVER_HOST_EMC, "emcx.emercoin.net");
-        SharedPreferencesHelper.getInstance().putIntValue(SERVER_PORT_EMC, 9110);
+        SPHelper.getInstance().putStringValue(SERVER_HOST_BTC, "btcx.emercoin.net");
+        SPHelper.getInstance().putIntValue(SERVER_PORT_BTC, 50001);
+        SPHelper.getInstance().putStringValue(SERVER_HOST_EMC, "emcx.emercoin.net");
+        SPHelper.getInstance().putIntValue(SERVER_PORT_EMC, 9110);
 
         findViewById(R.id.btn_generate_seed).setOnClickListener(c ->
                 startActivity(new Intent(this, AttentionActivity.class)));

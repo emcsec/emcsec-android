@@ -118,6 +118,7 @@
     <string name="operations">操作</string>
     <string name="servers">Servers</string>
     <string name="addresses_for_the_change">更改的地址</string>
+    <string name="address_for_the_change">更改的地址</string>
     <string name="address_for_the_change_in_emercoin">更改的地址Emercoin</string>
     <string name="address_for_the_change_in_bitcoin">更改的地址Bitcoin</string>
     <string name="the_server_for_emercoin">服务器Emercoin</string>
@@ -126,6 +127,7 @@
     <string name="confirm_a_pin">确认PIN码</string>
     <string name="confirm">确认</string>
     <string name="would_you_like_to_set_up_a_pin">你想设置一个\PIN码吗?</string>
+    <string name="would_you_like_to_set_up_fingerprint">你想设置一个\nFingerprint吗?</string>
     <string name="text_for_about">
         Emercoin安全钱包是基于电子协议的一种易于使用的加密轻钱包，目前支持两种加密货币的同时存储：Emercoin和比特币。\n\n这个钱包在用户设备上存储个人私钥，因此绝对安全，而钱包本身则是用一组种子密语（种子关键词）保护，而且因为不需要下载整个区块链，因此是轻量级。\n\n您也可以使用你自己的Electrum钱包。\n\nEmercoin安全钱包可用于智能手机、平板电脑和台式电脑。你可以同时在几个设备上使用同一个钱包。\n
     </string>
@@ -145,4 +147,8 @@
     <string name="recommended">推薦的:</string>
     <string name="custom">習慣:</string>
     <string name="minimum_0_00001">最小值為0.00001</string>
+    <string name="private_key">私鑰</string>
+    <string name="fingerprint">Fingerprint</string>
+    <string name="pin_code_fingerprint_not_recognized">Fingerprint not recognized</string>
+
 </resources>

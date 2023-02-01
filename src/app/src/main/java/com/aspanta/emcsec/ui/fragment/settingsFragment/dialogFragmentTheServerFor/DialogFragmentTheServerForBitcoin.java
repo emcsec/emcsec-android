@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.aspanta.emcsec.R;
-import com.aspanta.emcsec.db.SharedPreferencesHelper;
+import com.aspanta.emcsec.db.SPHelper;
 import com.aspanta.emcsec.ui.fragment.IBaseFragment;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.SettingsServersFragment;
 import com.aspanta.emcsec.ui.fragment.settingsFragment.SettingsServersFragmentForGenerateActivity;
@@ -57,8 +57,8 @@ public class DialogFragmentTheServerForBitcoin extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_fragment_the_server_for_bitcoin, container, false);
         init(view);
 
-        mEtHost.setText(SharedPreferencesHelper.getInstance().getStringValue(SERVER_HOST_BTC));
-        mEtPort.setText(String.valueOf(SharedPreferencesHelper.getInstance().getIntValue(SERVER_PORT_BTC)));
+        mEtHost.setText(SPHelper.getInstance().getStringValue(SERVER_HOST_BTC));
+        mEtPort.setText(String.valueOf(SPHelper.getInstance().getIntValue(SERVER_PORT_BTC)));
 
         setCancelable(false);
         validateFields();
@@ -72,8 +72,8 @@ public class DialogFragmentTheServerForBitcoin extends DialogFragment {
 
         mBtnSave.setOnClickListener(o -> {
 
-            SharedPreferencesHelper.getInstance().putStringValue(SERVER_HOST_BTC, mEtHost.getText().toString());
-            SharedPreferencesHelper.getInstance().putIntValue(SERVER_PORT_BTC, Integer.parseInt(mEtPort.getText().toString()));
+            SPHelper.getInstance().putStringValue(SERVER_HOST_BTC, mEtHost.getText().toString());
+            SPHelper.getInstance().putIntValue(SERVER_PORT_BTC, Integer.parseInt(mEtPort.getText().toString()));
 
             if (sSettingsServersFragment != null) {
                 sSettingsServersFragment.setHostPortSSLBtc();

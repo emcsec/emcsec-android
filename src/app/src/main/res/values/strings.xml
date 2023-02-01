@@ -118,6 +118,7 @@
     <string name="operations">Operations</string>
     <string name="servers">Servers</string>
     <string name="addresses_for_the_change">Addresses for change</string>
+    <string name="address_for_the_change">Address for change</string>
     <string name="address_for_the_change_in_emercoin">Address for change in Emercoin</string>
     <string name="address_for_the_change_in_bitcoin">Address for change in Bitcoin</string>
     <string name="the_server_for_emercoin">The server for Emercoin</string>
@@ -125,7 +126,8 @@
     <string name="set_a_pin">Set a PIN</string>
     <string name="confirm_a_pin">Confirm a PIN</string>
     <string name="confirm">Confirm</string>
-    <string name="would_you_like_to_set_up_a_pin">Would you like to \n set up a PIN?</string>
+    <string name="would_you_like_to_set_up_a_pin">Would you like to\nset up a PIN?</string>
+    <string name="would_you_like_to_set_up_fingerprint">Would you like to\nset up a Fingerprint?</string>
     <string name="text_for_about">
         Emercoin Secure Wallet is an easy-to-use and lightweight crypto wallet based on the Electrum protocol. It currently supports two cryptocurrencies, Emercoin and Bitcoin, stored together in the same wallet.\n\nThe wallet is:\nSecure, with private keys stored on the users device and the wallet itself is protected with a seed phrase, and\nLightweight, because it does not keep a local copy of the blockchain.\n\nYou can also use the wallet with your own Electrum servers.\n\nEmercoin Secure Wallet is available for smartphones, tablets and desktop computers. You can use the same wallet on several devices at once.\n
     </string>
@@ -145,4 +147,7 @@
     <string name="recommended">Recommended:</string>
     <string name="custom">Custom:</string>
     <string name="minimum_0_00001">Minimum 0.00001</string>
+    <string name="private_key">Private key</string>
+    <string name="fingerprint">Fingerprint</string>
+    <string name="pin_code_fingerprint_not_recognized">Fingerprint not recognized</string>
 </resources>
